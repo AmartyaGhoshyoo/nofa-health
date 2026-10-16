@@ -1,0 +1,12 @@
+{
+  "clinic": "Brightside Family Clinic",
+  "lines": [
+    { "id": "01-agent", "role": "assistant", "text": "Thanks for calling Brightside Family Clinic, this is Nofa. How can I help you today?" },
+    { "id": "02-patient", "role": "user", "text": "Hi! I need to move my appointment on Thursday — something came up at work." },
+    { "id": "03-agent", "role": "assistant", "text": "Of course. I can see your two-thirty with Dr. Chen on Thursday. I have Friday at ten in the morning, or Monday at four-fifteen. Which works better for you?" },
+    { "id": "04-patient", "role": "user", "text": "Friday at ten would be perfect." },
+    { "id": "05-agent", "role": "assistant", "text": "Done. The clinic system has confirmed Friday at ten A M with Dr. Chen, and I've just texted you the details. Is there anything else I can help with?" },
+    { "id": "06-patient", "role": "user", "text": "No, that's everything. Thank you so much!" },
+    { "id": "07-agent", "role": "assistant", "text": "You're very welcome. Have a lovely day!" }
+  ]
+}
