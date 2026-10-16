@@ -1,0 +1,5 @@
+import { ReactNode } from "react";
+
+export default function Container({ children, className = "" }: { children: ReactNode; className?: string }) {
+  return <div className={`mx-auto max-w-wrap px-5 sm:px-6 ${className}`}>{children}</div>;
+}
