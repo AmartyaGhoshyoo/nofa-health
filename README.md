@@ -1,8 +1,47 @@
-# Nofa Health — AI front desk for clinics
+<p align="center">
+  <a href="https://nofa-health.vercel.app">
+    <img src="docs/preview.jpg" alt="Nofa Health — Every patient answered. Every slot filled." width="100%" />
+  </a>
+</p>
+
+<h1 align="center">Nofa Health — AI front desk for clinics</h1>
+
+<p align="center">
+  <a href="https://nofa-health.vercel.app"><b>Live site</b></a> ·
+  Next.js 14 · TypeScript · Tailwind CSS · Motion ·
+  A product by <a href="https://www.zovak.tech"><b>Zovak</b></a>
+</p>
 
 Marketing site + interactive demo for a healthcare AI receptionist and
-scheduling agent (voice + chat). Built with **Next.js 14 (App Router)**,
-**TypeScript**, **Tailwind CSS** and **Motion**. A product by Zovak.
+scheduling agent (voice + chat). It answers every call and message, books
+against live availability, and repairs the schedule when plans change.
+
+## Screenshots
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/01-hero.jpg" alt="Hero with playable demo call" /><br/><sub><b>Hero</b> — press play to hear a patient and Nofa on a call</sub></td>
+    <td width="50%"><img src="docs/screenshots/02-demo-call.jpg" alt="Demo call playing" /><br/><sub><b>Demo call</b> — voices, live captions, slots and booking in sync</sub></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/05-schedule-recovery.jpg" alt="Schedule recovery demo" /><br/><sub><b>Schedule recovery</b> — one command re-plans every affected appointment</sub></td>
+    <td><img src="docs/screenshots/04-how-it-works.jpg" alt="How it works pipeline" /><br/><sub><b>How it works</b> — receive → understand → check → act → confirm</sub></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/06-features.jpg" alt="Features bento with live animations" /><br/><sub><b>Features</b> — bento cards with live mini-animations</sub></td>
+    <td><img src="docs/screenshots/07-dashboard.jpg" alt="Dashboard preview" /><br/><sub><b>Visibility</b> — calls, bookings and recovered slots (sample data)</sub></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/03-statement.jpg" alt="Scroll-linked statement and marquees" /><br/><sub><b>Statement</b> — words light up as you scroll</sub></td>
+    <td><img src="docs/screenshots/08-integrations.jpg" alt="Integrations orbit and controls" /><br/><sub><b>Fits your clinic</b> — integrations and trust controls</sub></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/09-chat-assistant.jpg" alt="Chat assistant booking" /><br/><sub><b>Chat assistant</b> — books and shows a verified confirmation</sub></td>
+    <td align="center"><img src="docs/screenshots/10-mobile.jpg" alt="Mobile view" width="46%" /><br/><sub><b>Mobile</b></sub></td>
+  </tr>
+</table>
+
+## Run locally
 
 ```bash
 npm install
