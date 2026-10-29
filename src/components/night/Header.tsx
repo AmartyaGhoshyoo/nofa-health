@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, useMotionValueEvent, useScroll } from "motion/react";
 import { LogoMark } from "../ui/Logo";
+import ThemeToggle from "../ThemeToggle";
 import { openAssistant } from "../assistant/events";
 import { site } from "@/config/site";
 
@@ -28,30 +29,31 @@ export default function Header() {
     >
       <div
         className={`mx-auto mt-3 flex max-w-[1240px] items-center justify-between gap-4 rounded-full px-4 py-2.5 transition-all duration-500 sm:mx-4 sm:px-5 xl:mx-auto ${
-          solid ? "border border-night-line bg-night/70 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.9)] backdrop-blur-xl" : "border border-transparent"
+          solid ? "border border-th-line bg-th-bg/70 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.6)] backdrop-blur-xl" : "border border-transparent"
         }`}
       >
-        <a href="#top" className="flex items-center gap-2.5 text-white">
+        <a href="#top" className="flex items-center gap-2.5 text-th-fg">
           <LogoMark className="h-7 w-7" />
           <span className="font-display text-[1.2rem] leading-none">{site.name}</span>
         </a>
         <nav aria-label="Main" className="hidden items-center gap-7 md:flex">
           {LINKS.map((l) => (
-            <a key={l.href} href={l.href} className="text-[0.88rem] text-white/60 transition-colors hover:text-white">
+            <a key={l.href} href={l.href} className="text-[0.88rem] text-th-fg/60 transition-colors hover:text-th-fg">
               {l.label}
             </a>
           ))}
         </nav>
         <div className="flex items-center gap-2">
+          <ThemeToggle className="text-th-fg" />
           <a
             href="/staff"
-            className="hidden rounded-full px-3.5 py-2 text-[0.86rem] font-semibold text-white/70 transition-colors hover:text-white sm:block"
+            className="hidden rounded-full px-3.5 py-2 text-[0.86rem] font-semibold text-th-fg/70 transition-colors hover:text-th-fg sm:block"
           >
             Staff portal
           </a>
           <button
             onClick={() => openAssistant("voice")}
-            className="cursor-pointer rounded-full bg-spark px-4 py-2 text-[0.86rem] font-bold text-night transition-transform hover:scale-[1.04]"
+            className="cursor-pointer rounded-full bg-th-spark px-4 py-2 text-[0.86rem] font-bold text-th-on transition-transform hover:scale-[1.04]"
           >
             Talk to {site.agent}
           </button>

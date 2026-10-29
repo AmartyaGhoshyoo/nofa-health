@@ -18,7 +18,7 @@ export default function Guardrails() {
     <section className="relative py-28 sm:py-36">
       <Wrap>
         <Eyebrow>Call rules</Eyebrow>
-        <h2 className="mt-5 max-w-[46rem] font-display text-[clamp(2.4rem,5vw,4.4rem)] leading-[1.02] text-white">
+        <h2 className="mt-5 max-w-[46rem] font-display text-[clamp(2.4rem,5vw,4.4rem)] leading-[1.02] text-th-fg">
           <RiseWords text="Polite on the phone. *Strict* with the calendar." />
         </h2>
         <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -32,10 +32,10 @@ export default function Guardrails() {
               whileHover={{ y: -4 }}
               className="group"
             >
-              <Glass className="h-full p-6 transition-colors group-hover:border-aqua/30">
-                <span className="font-serif text-[2.6rem] italic leading-none text-aqua transition-colors group-hover:text-spark">{r.k}</span>
-                <p className="mt-4 font-display text-[1.25rem] text-white">{r.title}</p>
-                <p className="mt-2 text-[0.92rem] leading-relaxed text-white/55">{r.body}</p>
+              <Glass className="h-full p-6 transition-colors group-hover:border-th-aqua/30">
+                <span className="font-serif text-[2.6rem] italic leading-none text-th-aqua-ink transition-colors group-hover:text-th-spark-ink">{r.k}</span>
+                <p className="mt-4 font-display text-[1.25rem] text-th-fg">{r.title}</p>
+                <p className="mt-2 text-[0.92rem] leading-relaxed text-th-fg/55">{r.body}</p>
               </Glass>
             </motion.div>
           ))}

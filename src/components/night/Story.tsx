@@ -53,24 +53,24 @@ export default function Story() {
                   <span className="font-display text-[5.5rem] leading-none text-transparent [-webkit-text-stroke:1px_rgba(94,234,212,0.45)]">
                     0{step + 1}
                   </span>
-                  <h2 className="mt-3 font-display text-[clamp(2.4rem,4vw,3.6rem)] leading-[1.02] text-white">
+                  <h2 className="mt-3 font-display text-[clamp(2.4rem,4vw,3.6rem)] leading-[1.02] text-th-fg">
                     <Title text={chapter.title} />
                   </h2>
-                  <p className="mt-5 max-w-[30rem] text-[1.04rem] leading-relaxed text-white/60">{chapter.body}</p>
+                  <p className="mt-5 max-w-[30rem] text-[1.04rem] leading-relaxed text-th-fg/60">{chapter.body}</p>
                 </motion.div>
               </AnimatePresence>
             </div>
             <div className="mt-10 flex items-center gap-3">
               {CHAPTERS.map((_, i) => (
-                <span key={i} className="relative h-1 w-14 overflow-hidden rounded-full bg-white/10">
+                <span key={i} className="relative h-1 w-14 overflow-hidden rounded-full bg-th-fg/10">
                   <motion.span
-                    className="absolute inset-y-0 left-0 rounded-full bg-aqua"
+                    className="absolute inset-y-0 left-0 rounded-full bg-th-aqua"
                     animate={{ width: i < step ? "100%" : i === step ? "60%" : "0%" }}
                     transition={{ duration: 0.5 }}
                   />
                 </span>
               ))}
-              <motion.span className="ml-2 font-mono text-[0.72rem] text-white/40">
+              <motion.span className="ml-2 font-mono text-[0.72rem] text-th-fg/40">
                 {step + 1} / 4
               </motion.span>
             </div>
@@ -87,10 +87,10 @@ export default function Story() {
             <span className="font-display text-[3.5rem] leading-none text-transparent [-webkit-text-stroke:1px_rgba(94,234,212,0.45)]">
               0{i + 1}
             </span>
-            <h2 className="mt-2 font-display text-[2.3rem] leading-[1.05] text-white">
+            <h2 className="mt-2 font-display text-[2.3rem] leading-[1.05] text-th-fg">
               <RiseWords text={c.title} />
             </h2>
-            <p className="mt-4 text-white/60">{c.body}</p>
+            <p className="mt-4 text-th-fg/60">{c.body}</p>
             <div className="mt-8">
               <Stage step={i} />
             </div>
@@ -107,7 +107,7 @@ function Title({ text }: { text: string }) {
       {text.split(" ").map((w, i) => {
         const accent = w.startsWith("*") && w.endsWith("*");
         return (
-          <span key={i} className={accent ? "font-serif font-normal italic tracking-normal text-aqua" : ""}>
+          <span key={i} className={accent ? "font-serif font-normal italic tracking-normal text-th-aqua-ink" : ""}>
             {accent ? w.slice(1, -1) : w}{" "}
           </span>
         );
@@ -121,17 +121,17 @@ function Title({ text }: { text: string }) {
 function Stage({ step, progress }: { step: number; progress?: ReturnType<typeof useSpring> }) {
   return (
     <Glass className="relative overflow-hidden p-5 sm:p-6">
-      <div className="mb-4 flex items-center justify-between border-b border-night-line pb-3">
+      <div className="mb-4 flex items-center justify-between border-b border-th-line pb-3">
         <span className="flex items-center gap-2.5">
           <span className="h-8 w-8 rounded-full bg-[radial-gradient(circle_at_35%_30%,#A7F3D0,#0E7490_70%)] shadow-[0_0_20px_rgba(94,234,212,0.5)]" />
           <span>
-            <span className="block text-[0.9rem] font-bold text-white">Nofa</span>
-            <span className="block text-[0.72rem] text-white/45">Brightside Family Clinic</span>
+            <span className="block text-[0.9rem] font-bold text-th-fg">Nofa</span>
+            <span className="block text-[0.72rem] text-th-fg/45">Brightside Family Clinic</span>
           </span>
         </span>
         {progress && (
-          <span className="h-1 w-24 overflow-hidden rounded-full bg-white/10">
-            <motion.span className="block h-full origin-left bg-aqua" style={{ scaleX: progress }} />
+          <span className="h-1 w-24 overflow-hidden rounded-full bg-th-fg/10">
+            <motion.span className="block h-full origin-left bg-th-aqua" style={{ scaleX: progress }} />
           </span>
         )}
       </div>
@@ -163,8 +163,8 @@ function Bubble({ who, children, delay = 0 }: { who: "patient" | "nofa"; childre
       transition={{ duration: 0.45, delay, ease }}
       className={
         who === "patient"
-          ? "ml-auto w-fit max-w-[80%] rounded-2xl rounded-br-md bg-white/10 px-4 py-2.5 text-[0.92rem] text-white"
-          : "w-fit max-w-[85%] rounded-2xl rounded-bl-md border border-aqua/20 bg-aqua/[0.07] px-4 py-2.5 text-[0.92rem] text-white/90"
+          ? "ml-auto w-fit max-w-[80%] rounded-2xl rounded-br-md bg-th-fg/10 px-4 py-2.5 text-[0.92rem] text-th-fg"
+          : "w-fit max-w-[85%] rounded-2xl rounded-bl-md border border-th-aqua/20 bg-th-aqua/[0.07] px-4 py-2.5 text-[0.92rem] text-th-fg/90"
       }
     >
       {children}
@@ -189,7 +189,7 @@ function Listen() {
         className="flex flex-wrap gap-2 pt-3"
       >
         {["No diagnosis", "No medical advice", "Emergency? Call emergency services"].map((t) => (
-          <span key={t} className="rounded-full border border-white/10 px-3 py-1 font-mono text-[0.68rem] uppercase tracking-wider text-white/50">
+          <span key={t} className="rounded-full border border-th-fg/10 px-3 py-1 font-mono text-[0.68rem] uppercase tracking-wider text-th-fg/50">
             {t}
           </span>
         ))}
@@ -201,7 +201,7 @@ function Listen() {
 function Match() {
   return (
     <div>
-      <p className="mb-3 font-mono text-[0.7rem] uppercase tracking-[0.2em] text-white/40">Matching the need → Pediatrics</p>
+      <p className="mb-3 font-mono text-[0.7rem] uppercase tracking-[0.2em] text-th-fg/40">Matching the need → Pediatrics</p>
       <div className="grid grid-cols-2 gap-3">
         {DOCTORS.map((d, i) => {
           const match = d.id === "sultana";
@@ -211,19 +211,19 @@ function Match() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: match ? 1 : 0.22, y: 0, scale: match ? 1.04 : 0.96 }}
               transition={{ duration: 0.6, delay: 0.1 + i * 0.08, ease }}
-              className={`rounded-2xl border p-3.5 ${match ? "border-aqua/60 bg-aqua/10 shadow-[0_0_40px_-10px_rgba(94,234,212,0.6)]" : "border-white/10"}`}
+              className={`rounded-2xl border p-3.5 ${match ? "border-th-aqua/60 bg-th-aqua/10 shadow-[0_0_40px_-10px_rgba(94,234,212,0.6)]" : "border-th-fg/10"}`}
             >
-              <span className={`flex h-9 w-9 items-center justify-center rounded-full text-[0.78rem] font-bold ${match ? "bg-aqua text-night" : "bg-white/10 text-white/60"}`}>
+              <span className={`flex h-9 w-9 items-center justify-center rounded-full text-[0.78rem] font-bold ${match ? "bg-th-aqua text-th-on" : "bg-th-fg/10 text-th-fg/60"}`}>
                 {d.short}
               </span>
-              <p className="mt-2.5 text-[0.9rem] font-bold text-white">{d.name}</p>
-              <p className="text-[0.76rem] text-white/50">{d.specialty}</p>
+              <p className="mt-2.5 text-[0.9rem] font-bold text-th-fg">{d.name}</p>
+              <p className="text-[0.76rem] text-th-fg/50">{d.specialty}</p>
               {match && (
                 <motion.p
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.7 }}
-                  className="mt-2 inline-block rounded-full bg-spark px-2.5 py-0.5 text-[0.7rem] font-bold text-night"
+                  className="mt-2 inline-block rounded-full bg-th-spark px-2.5 py-0.5 text-[0.7rem] font-bold text-th-on"
                 >
                   ✓ Doctor selected
                 </motion.p>
@@ -248,7 +248,7 @@ const LUNCH = new Set(["12:00", "12:30"]);
 function FindTime() {
   return (
     <div>
-      <p className="mb-3 font-mono text-[0.7rem] uppercase tracking-[0.2em] text-white/40">Dr. Sultana · tomorrow · Dhaka time</p>
+      <p className="mb-3 font-mono text-[0.7rem] uppercase tracking-[0.2em] text-th-fg/40">Dr. Sultana · tomorrow · Dhaka time</p>
       <div className="grid grid-cols-4 gap-2">
         {SLOTS.map((s, i) => {
           const chosen = s === "11:00";
@@ -261,18 +261,18 @@ function FindTime() {
               transition={{ duration: 0.35, delay: i * 0.04 }}
               className={`relative rounded-xl border py-2.5 text-center font-mono text-[0.82rem] ${
                 chosen
-                  ? "border-spark bg-spark font-bold text-night"
+                  ? "border-th-spark bg-th-spark font-bold text-th-on"
                   : LUNCH.has(s)
-                    ? "border-dashed border-white/15 text-white/40 [background:repeating-linear-gradient(135deg,transparent_0_6px,rgba(255,255,255,0.05)_6px_12px)]"
+                    ? "border-dashed border-th-fg/15 text-th-fg/40 [background:repeating-linear-gradient(135deg,transparent_0_6px,rgba(255,255,255,0.05)_6px_12px)]"
                     : TAKEN.has(s)
-                      ? "border-white/10 text-white/40 line-through"
-                      : "border-white/15 text-white/80"
+                      ? "border-th-fg/10 text-th-fg/40 line-through"
+                      : "border-th-fg/15 text-th-fg/80"
               }`}
             >
               {s}
               {chosen && (
                 <motion.span
-                  className="absolute inset-0 rounded-xl border-2 border-spark"
+                  className="absolute inset-0 rounded-xl border-2 border-th-spark"
                   animate={{ scale: [1, 1.18], opacity: [0.8, 0] }}
                   transition={{ duration: 1.4, repeat: Infinity }}
                 />
@@ -281,19 +281,19 @@ function FindTime() {
           );
         })}
       </div>
-      <div className="mt-3 flex gap-4 font-mono text-[0.66rem] uppercase tracking-wider text-white/40">
+      <div className="mt-3 flex gap-4 font-mono text-[0.66rem] uppercase tracking-wider text-th-fg/40">
         <span>▨ lunch</span>
         <span className="line-through">booked</span>
-        <span className="text-spark">● held for you · 2:00</span>
+        <span className="text-th-spark-ink">● held for you · 2:00</span>
       </div>
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.7, ease }}
-        className="mt-5 rounded-2xl border border-white/10 p-3.5"
+        className="mt-5 rounded-2xl border border-th-fg/10 p-3.5"
       >
-        <p className="text-[0.78rem] text-white/50">Type your email (never spelled out loud)</p>
-        <p className="mt-1.5 rounded-lg bg-white/5 px-3 py-2 font-mono text-[0.86rem] text-white">
+        <p className="text-[0.78rem] text-th-fg/50">Type your email (never spelled out loud)</p>
+        <p className="mt-1.5 rounded-lg bg-th-fg/5 px-3 py-2 font-mono text-[0.86rem] text-th-fg">
           <Typed text="rahim.parent@mail.com" />
         </p>
       </motion.div>
@@ -309,7 +309,7 @@ function Typed({ text }: { text: string }) {
           {ch}
         </motion.span>
       ))}
-      <span className="ml-0.5 inline-block h-4 w-[2px] translate-y-0.5 animate-blink bg-aqua" />
+      <span className="ml-0.5 inline-block h-4 w-[2px] translate-y-0.5 animate-blink bg-th-aqua" />
     </>
   );
 }
@@ -321,13 +321,13 @@ function Confirm() {
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease }}
-        className="overflow-hidden rounded-2xl border border-spark/40"
+        className="overflow-hidden rounded-2xl border border-th-spark/40"
       >
         <motion.div
           initial={{ backgroundColor: "rgba(94,234,212,0.12)" }}
           animate={{ backgroundColor: "rgba(200,241,105,1)" }}
           transition={{ delay: 1, duration: 0.5 }}
-          className="flex items-center gap-2 px-4 py-2 text-[0.8rem] font-bold text-night"
+          className="flex items-center gap-2 px-4 py-2 text-[0.8rem] font-bold text-th-on"
         >
           <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 1.1, type: "spring" }}>
             ✓
@@ -335,8 +335,8 @@ function Confirm() {
           Booked · confirmed by calendar
         </motion.div>
         <div className="px-4 py-3">
-          <p className="font-bold text-white">Fri, Oct 30 · 11:00 – 11:30 AM</p>
-          <p className="text-[0.86rem] text-white/60">Child check-up with Dr. Nusrat Sultana · Rahim</p>
+          <p className="font-bold text-th-fg">Fri, Oct 30 · 11:00 – 11:30 AM</p>
+          <p className="text-[0.86rem] text-th-fg/60">Child check-up with Dr. Nusrat Sultana · Rahim</p>
         </div>
       </motion.div>
       <Bubble who="patient" delay={0.4}>
@@ -346,10 +346,10 @@ function Confirm() {
         initial={{ opacity: 0, x: 40, rotate: 6 }}
         animate={{ opacity: 1, x: 0, rotate: -2 }}
         transition={{ delay: 1.5, duration: 0.7, ease }}
-        className="ml-auto w-fit rounded-xl bg-white px-3.5 py-2.5 text-[0.78rem] text-night shadow-xl"
+        className="ml-auto w-fit rounded-xl bg-white px-3.5 py-2.5 text-[0.78rem] text-th-on shadow-xl"
       >
         <p className="font-bold">📅 Invitation: Child check-up</p>
-        <p className="text-night/60">Google Calendar · sent to rahim.parent@mail.com</p>
+        <p className="text-th-on/60">Google Calendar · sent to rahim.parent@mail.com</p>
       </motion.div>
       <Bubble who="nofa" delay={1.9}>
         You&apos;re all set with Dr. Nusrat Sultana tomorrow at 11:00 AM. Thanks for calling — take care, goodbye!

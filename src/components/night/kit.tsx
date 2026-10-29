@@ -12,8 +12,8 @@ export function Wrap({ children, className = "" }: { children: ReactNode; classN
 
 export function Eyebrow({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
-    <p className={`font-mono text-[0.72rem] uppercase tracking-[0.24em] text-aqua/80 ${className}`}>
-      <span className="mr-2 inline-block h-1.5 w-1.5 -translate-y-px rounded-full bg-aqua shadow-[0_0_10px_#5EEAD4]" />
+    <p className={`font-mono text-[0.72rem] uppercase tracking-[0.24em] text-th-aqua-ink/80 ${className}`}>
+      <span className="mr-2 inline-block h-1.5 w-1.5 -translate-y-px rounded-full bg-th-aqua shadow-[0_0_10px_#5EEAD4]" />
       {children}
     </p>
   );
@@ -21,7 +21,7 @@ export function Eyebrow({ children, className = "" }: { children: ReactNode; cla
 
 /** Serif italic accent inside a headline, e.g. <Accent>kept.</Accent> */
 export function Accent({ children }: { children: ReactNode }) {
-  return <em className="font-serif font-normal italic tracking-normal text-aqua">{children}</em>;
+  return <em className="font-serif font-normal italic tracking-normal text-th-aqua-ink">{children}</em>;
 }
 
 /**
@@ -40,7 +40,7 @@ export function RiseWords({ text, className = "", delay = 0 }: { text: string; c
           <span key={i}>
             <span className="inline-block overflow-hidden pb-[0.14em] align-top">
               <motion.span
-                className={`inline-block ${accent ? "font-serif font-normal italic tracking-normal text-aqua" : ""}`}
+                className={`inline-block ${accent ? "font-serif font-normal italic tracking-normal text-th-aqua-ink" : ""}`}
                 variants={{
                   hidden: { y: "115%" },
                   show: { y: "0%", transition: { duration: 0.95, delay: delay + i * 0.055, ease } },
@@ -75,7 +75,7 @@ export function Rise({ children, delay = 0, className = "" }: { children: ReactN
 export function Glass({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
     <div
-      className={`relative rounded-[1.6rem] border border-night-line bg-white/[0.035] shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_30px_80px_-30px_rgba(0,0,0,0.8)] backdrop-blur-xl ${className}`}
+      className={`relative rounded-[1.6rem] border border-th-line bg-th-panel/55 shadow-[inset_0_1px_0_rgb(var(--th-fg)/0.06),0_30px_80px_-30px_rgba(0,0,0,0.5)] backdrop-blur-xl ${className}`}
     >
       {children}
     </div>

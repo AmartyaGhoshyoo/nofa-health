@@ -1,4 +1,5 @@
 import type { Viewport } from "next";
+import Backdrop from "@/components/night/Backdrop";
 import Header from "@/components/night/Header";
 import Hero from "@/components/night/Hero";
 import Story from "@/components/night/Story";
@@ -11,13 +12,19 @@ import Finale from "@/components/night/Finale";
 
 // The animated "night shift" homepage: a dark, scroll-driven story of one booking,
 // then the channels, the running-late planner, the staff desk and the call rules.
-export const viewport: Viewport = { themeColor: "#04080A" };
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#04080A" },
+    { media: "(prefers-color-scheme: light)", color: "#F4F7F5" },
+  ],
+};
 
 export default function Home() {
   return (
-    <div className="min-h-screen overflow-x-clip bg-night text-white">
+    <div className="relative min-h-screen overflow-x-clip bg-th-bg text-th-fg transition-colors duration-500">
+      <Backdrop />
       <Header />
-      <main>
+      <main className="relative z-10">
         <Hero />
         <Story />
         <Rule />

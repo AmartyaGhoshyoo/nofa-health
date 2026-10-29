@@ -18,8 +18,8 @@ export default function Rule() {
   return (
     <section className="relative py-24 sm:py-32">
       <Wrap>
-        <p className="mb-8 font-mono text-[0.72rem] uppercase tracking-[0.24em] text-white/35">The one rule</p>
-        <p ref={ref} className="max-w-[62rem] font-display text-[clamp(2rem,4.6vw,4rem)] leading-[1.08] text-white">
+        <p className="mb-8 font-mono text-[0.72rem] uppercase tracking-[0.24em] text-th-fg/35">The one rule</p>
+        <p ref={ref} className="max-w-[62rem] font-display text-[clamp(2rem,4.6vw,4rem)] leading-[1.08] text-th-fg">
           {WORDS.map((w, i) => (
             <Word key={i} word={w} range={[i / WORDS.length, (i + 1) / WORDS.length]} progress={scrollYProgress} />
           ))}
@@ -35,7 +35,7 @@ function Word({ word, range, progress }: { word: string; range: [number, number]
   return (
     <motion.span
       style={{ opacity }}
-      className={bright ? "font-serif font-normal italic tracking-normal text-aqua" : ""}
+      className={bright ? "font-serif font-normal italic tracking-normal text-th-aqua-ink" : ""}
     >
       {word}{" "}
     </motion.span>

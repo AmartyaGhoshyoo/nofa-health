@@ -6,6 +6,8 @@
 
 import { FormEvent, ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { site } from "@/config/site";
+import Backdrop from "@/components/night/Backdrop";
+import ThemeToggle from "@/components/ThemeToggle";
 
 type Role = "doctor" | "receptionist" | "manager";
 interface Me {
@@ -126,18 +128,21 @@ export default function StaffPage() {
   }
 
   return (
-    <main className="min-h-dvh bg-canvas font-widget text-ink">
-      {checking ? null : token && me ? (
-        <Portal token={token} me={me} onSignOut={signOut} onExpired={signOut} />
-      ) : (
-        <SignIn
-          onSignedIn={(tk, m) => {
-            writeToken(tk);
-            setToken(tk);
-            setMe(m);
-          }}
-        />
-      )}
+    <main className="relative min-h-dvh bg-canvas font-widget text-ink transition-colors duration-500">
+      <Backdrop quiet />
+      <div className="relative z-10">
+        {checking ? null : token && me ? (
+          <Portal token={token} me={me} onSignOut={signOut} onExpired={signOut} />
+        ) : (
+          <SignIn
+            onSignedIn={(tk, m) => {
+              writeToken(tk);
+              setToken(tk);
+              setMe(m);
+            }}
+          />
+        )}
+      </div>
     </main>
   );
 }
@@ -176,9 +181,10 @@ function SignIn({ onSignedIn }: { onSignedIn: (token: string, me: Me) => void })
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-sm flex-col justify-center px-4">
+      <ThemeToggle className="fixed right-4 top-4 bg-surface/70 text-ink backdrop-blur" />
       <p className="text-[0.8rem] font-bold uppercase tracking-wider text-teal">{site.name} · Staff</p>
       <h1 className="mt-1 text-2xl font-bold">Sign in</h1>
-      <form onSubmit={submit} className="mt-6 space-y-4 rounded-3xl border border-line bg-surface p-5 shadow-sm">
+      <form onSubmit={submit} className="mt-6 space-y-4 rounded-3xl border border-line bg-surface/85 p-5 shadow-sm backdrop-blur-xl">
         <label className="block text-[0.86rem] font-bold">
           Who are you?
           <select
@@ -211,7 +217,7 @@ function SignIn({ onSignedIn }: { onSignedIn: (token: string, me: Me) => void })
         )}
         <button
           disabled={busy || !pin}
-          className="w-full cursor-pointer rounded-xl bg-teal py-3 font-bold text-white disabled:opacity-50"
+          className="w-full cursor-pointer rounded-xl bg-teal py-3 font-bold text-on-accent disabled:opacity-50"
         >
           {busy ? "Signing in…" : "Sign in"}
         </button>
@@ -255,11 +261,14 @@ function Portal({ token, me, onSignOut, onExpired }: { token: string; me: Me; on
             {me.role === "doctor" ? "Your schedule" : `${me.role} · all doctors`}
           </p>
         </div>
-        <button onClick={onSignOut} className="cursor-pointer rounded-full border border-line-strong px-4 py-2 text-[0.86rem] font-bold">
-          Sign out
-        </button>
+        <div className="flex items-center gap-2">
+          <ThemeToggle className="bg-surface/70 text-ink backdrop-blur" />
+          <button onClick={onSignOut} className="cursor-pointer rounded-full border border-line-strong bg-surface/70 px-4 py-2 text-[0.86rem] font-bold backdrop-blur">
+            Sign out
+          </button>
+        </div>
       </header>
-      <nav role="tablist" className="mb-5 flex gap-1 overflow-x-auto rounded-full bg-canvas-soft p-1">
+      <nav role="tablist" className="mb-5 flex gap-1 overflow-x-auto rounded-full bg-canvas-soft/80 p-1 backdrop-blur-xl">
         {tabs.map(([id, label]) => (
           <button
             key={id}
@@ -320,7 +329,7 @@ function Badge({ status }: { status: string }) {
 }
 
 function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <section className={`rounded-3xl border border-line bg-surface p-4 shadow-sm ${className}`}>{children}</section>;
+  return <section className={`rounded-3xl border border-line bg-surface/85 p-4 shadow-sm backdrop-blur-xl ${className}`}>{children}</section>;
 }
 
 // ── Schedule ─────────────────────────────────────────────────────────────────
@@ -338,7 +347,7 @@ function Schedule({ call }: { call: Call }) {
             key={label}
             onClick={() => setOffset(i)}
             className={`cursor-pointer rounded-full px-4 py-1.5 text-[0.86rem] font-bold ${
-              offset === i ? "bg-teal text-white" : "border border-line-strong text-ink-muted"
+              offset === i ? "bg-teal text-on-accent" : "border border-line-strong text-ink-muted"
             }`}
           >
             {label}
@@ -487,7 +496,7 @@ function RunningLate({ call, me, onSent }: { call: Call; me: Me; onSent: () => v
               key={m}
               onClick={() => setMinutes(m)}
               className={`cursor-pointer rounded-xl px-3.5 py-2 text-[0.9rem] font-bold ${
-                minutes === m ? "bg-teal text-white" : "border border-line-strong"
+                minutes === m ? "bg-teal text-on-accent" : "border border-line-strong"
               }`}
             >
               {m} min
@@ -518,7 +527,7 @@ function RunningLate({ call, me, onSent }: { call: Call; me: Me; onSent: () => v
               key={value}
               onClick={() => setFromWhen(value)}
               className={`cursor-pointer rounded-xl px-3.5 py-2 text-[0.9rem] font-bold ${
-                fromWhen === value ? "bg-teal text-white" : "border border-line-strong"
+                fromWhen === value ? "bg-teal text-on-accent" : "border border-line-strong"
               }`}
             >
               {label}
@@ -553,7 +562,7 @@ function RunningLate({ call, me, onSent }: { call: Call; me: Me; onSent: () => v
         <button
           onClick={preview}
           disabled={busy || !doctorId}
-          className="mt-4 w-full cursor-pointer rounded-xl bg-ink py-3 font-bold text-white disabled:opacity-50"
+          className="mt-4 w-full cursor-pointer rounded-xl bg-ink py-3 font-bold text-canvas disabled:opacity-50"
         >
           See who is affected
         </button>
@@ -617,7 +626,7 @@ function RunningLate({ call, me, onSent }: { call: Call; me: Me; onSent: () => v
               ))}
             </ul>
             <div className="mt-4 flex flex-wrap gap-2">
-              <button onClick={send} disabled={busy} className="cursor-pointer rounded-xl bg-teal px-5 py-3 font-bold text-white disabled:opacity-50">
+              <button onClick={send} disabled={busy} className="cursor-pointer rounded-xl bg-teal px-5 py-3 font-bold text-on-accent disabled:opacity-50">
                 Notify {plan.items.length} patient{plan.items.length > 1 ? "s" : ""}
               </button>
               <button onClick={discard} disabled={busy} className="cursor-pointer rounded-xl border border-line-strong px-5 py-3 font-bold">
@@ -759,7 +768,7 @@ function Assistant({ call, me }: { call: Call; me: Me }) {
           <p
             key={i}
             className={`max-w-[85%] whitespace-pre-wrap rounded-2xl px-3.5 py-2.5 text-[0.92rem] ${
-              m.role === "you" ? "ml-auto bg-teal text-white" : "border border-line bg-canvas/60"
+              m.role === "you" ? "ml-auto bg-teal text-on-accent" : "border border-line bg-canvas/60"
             }`}
           >
             {m.text}
@@ -780,7 +789,7 @@ function Assistant({ call, me }: { call: Call; me: Me }) {
           placeholder={me.role === "doctor" ? "e.g. I'm running 40 minutes late" : "e.g. Dr. Rahman is 30 minutes late"}
           className="min-w-0 flex-1 rounded-xl border border-line-strong px-3.5 py-2.5"
         />
-        <button disabled={busy || !input.trim()} className="cursor-pointer rounded-xl bg-teal px-5 font-bold text-white disabled:opacity-50">
+        <button disabled={busy || !input.trim()} className="cursor-pointer rounded-xl bg-teal px-5 font-bold text-on-accent disabled:opacity-50">
           Send
         </button>
       </form>

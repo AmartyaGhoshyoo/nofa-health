@@ -2,6 +2,60 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Themes. Colours are RGB channels so Tailwind can add opacity (bg-teal/25).
+   Light is the default; <html data-theme="dark"> switches everything at once:
+   the homepage (th-*), the assistant widget and the staff portal. */
+:root {
+  color-scheme: light;
+  /* Shared UI: widget, staff portal */
+  --canvas: 244 247 245;
+  --canvas-soft: 233 240 238;
+  --surface: 255 255 255;
+  --ink: 12 33 39;
+  --ink-muted: 68 92 100;
+  --ink-faint: 92 114 121;
+  --teal: 14 116 144;
+  --teal-hover: 11 95 119;
+  --teal-bright: 8 145 178;
+  --teal-light: 34 211 238;
+  --mint: 5 150 105;
+  --amber: 180 83 9;
+  --rose: 190 18 60;
+  --on-accent: 255 255 255; /* text on teal / mint / amber / rose fills */
+  /* Animated homepage */
+  --th-bg: 244 247 245;
+  --th-panel: 255 255 255;
+  --th-fg: 9 22 26;
+  --th-aqua: 45 212 191;
+  --th-aqua-ink: 15 118 110;
+  --th-spark: 190 236 90;
+  --th-spark-ink: 77 124 15;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --canvas: 4 8 10;
+  --canvas-soft: 16 27 32;
+  --surface: 11 19 23;
+  --ink: 234 243 242;
+  --ink-muted: 165 183 186;
+  --ink-faint: 128 147 151;
+  --teal: 94 234 212;
+  --teal-hover: 134 239 223;
+  --teal-bright: 45 212 191;
+  --teal-light: 103 232 249;
+  --mint: 74 222 128;
+  --amber: 251 191 36;
+  --rose: 251 113 133;
+  --on-accent: 4 8 10;
+  --th-bg: 4 8 10;
+  --th-panel: 7 13 16;
+  --th-fg: 255 255 255;
+  --th-aqua: 94 234 212;
+  --th-aqua-ink: 94 234 212;
+  --th-spark: 200 241 105;
+  --th-spark-ink: 200 241 105;
+}
+
 html {
   -webkit-font-smoothing: antialiased;
 }
@@ -55,8 +109,9 @@ html.lenis body {
 }
 
 body {
-  background-color: #f5f9f9;
-  color: #0f2b33;
+  background-color: rgb(var(--canvas));
+  color: rgb(var(--ink));
+  transition: background-color 0.4s ease;
 }
 
 ::selection {

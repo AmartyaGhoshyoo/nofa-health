@@ -50,10 +50,10 @@ export default function StaffDesk() {
     <section id="staff" className="relative py-28 sm:py-36">
       <Wrap>
         <Eyebrow>Staff desk</Eyebrow>
-        <h2 className="mt-5 max-w-[50rem] font-display text-[clamp(2.4rem,5vw,4.4rem)] leading-[1.02] text-white">
+        <h2 className="mt-5 max-w-[50rem] font-display text-[clamp(2.4rem,5vw,4.4rem)] leading-[1.02] text-th-fg">
           <RiseWords text="Every booking lands on the *right* doctor's day." />
         </h2>
-        <p className="mt-5 max-w-[38rem] text-[1.04rem] leading-relaxed text-white/55">
+        <p className="mt-5 max-w-[38rem] text-[1.04rem] leading-relaxed text-th-fg/55">
           Chat, website calls and phone bookings all go into one schedule. Doctors sign in and see only their own patients — any
           day — and reception sees everyone. It refreshes on its own.
         </p>
@@ -61,23 +61,23 @@ export default function StaffDesk() {
         <Rise className="mt-12">
           <div ref={ref}>
             <Glass className="overflow-hidden">
-              <div className="flex flex-wrap items-center gap-2 border-b border-night-line px-5 py-3.5">
+              <div className="flex flex-wrap items-center gap-2 border-b border-th-line px-5 py-3.5">
                 {["Schedule", "Running late", "Patient updates", "Assistant"].map((t, i) => (
                   <span
                     key={t}
-                    className={`rounded-full px-3.5 py-1.5 text-[0.8rem] font-semibold ${i === 0 ? "bg-white text-night" : "text-white/50"}`}
+                    className={`rounded-full px-3.5 py-1.5 text-[0.8rem] font-semibold ${i === 0 ? "bg-th-fg text-th-bg" : "text-th-fg/50"}`}
                   >
                     {t}
                   </span>
                 ))}
-                <span className="ml-auto font-mono text-[0.7rem] text-white/35">Friday, Oct 30 · Dhaka</span>
+                <span className="ml-auto font-mono text-[0.7rem] text-th-fg/35">Friday, Oct 30 · Dhaka</span>
               </div>
-              <div className="grid gap-px bg-night-line lg:grid-cols-[1fr_22rem]">
-                <div className="grid grid-cols-2 gap-px bg-night-line xl:grid-cols-4">
+              <div className="grid gap-px bg-th-line lg:grid-cols-[1fr_22rem]">
+                <div className="grid grid-cols-2 gap-px bg-th-line xl:grid-cols-4">
                   {DOCTORS.map((d, di) => (
-                    <div key={d.id} className="bg-night-900/95 p-4">
-                      <p className="text-[0.86rem] font-bold text-white">{d.name}</p>
-                      <p className="text-[0.72rem] text-white/40">
+                    <div key={d.id} className="bg-th-panel/95 p-4">
+                      <p className="text-[0.86rem] font-bold text-th-fg">{d.name}</p>
+                      <p className="text-[0.72rem] text-th-fg/40">
                         {d.specialty} · {d.hours}
                       </p>
                       <ul className="mt-3 space-y-2">
@@ -88,25 +88,25 @@ export default function StaffDesk() {
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: 0.2 + di * 0.1 + bi * 0.08, ease }}
-                            className={`rounded-xl px-3 py-2 ${b.moved && sent ? "bg-spark/15 ring-1 ring-spark/50" : "bg-white/[0.04]"}`}
+                            className={`rounded-xl px-3 py-2 ${b.moved && sent ? "bg-th-spark/15 ring-1 ring-th-spark/50" : "bg-th-fg/[0.04]"}`}
                           >
-                            <span className="flex items-center justify-between font-mono text-[0.76rem] text-white">
+                            <span className="flex items-center justify-between font-mono text-[0.76rem] text-th-fg">
                               <AnimatePresence mode="wait">
                                 <motion.span key={b.moved && sent ? "m" : "o"} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}>
                                   {b.moved && sent ? b.moved : b.t}
                                 </motion.span>
                               </AnimatePresence>
-                              {b.moved && sent && <span className="rounded-full bg-spark px-1.5 text-[0.6rem] font-bold text-night">moved</span>}
+                              {b.moved && sent && <span className="rounded-full bg-th-spark px-1.5 text-[0.6rem] font-bold text-th-on">moved</span>}
                             </span>
-                            <span className="text-[0.74rem] text-white/55">{b.who}</span>
+                            <span className="text-[0.74rem] text-th-fg/55">{b.who}</span>
                           </motion.li>
                         ))}
                       </ul>
                     </div>
                   ))}
                 </div>
-                <div className="flex flex-col bg-night-900/95 p-4">
-                  <p className="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-white/40">Assistant · Dr. Karim</p>
+                <div className="flex flex-col bg-th-panel/95 p-4">
+                  <p className="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-th-fg/40">Assistant · Dr. Karim</p>
                   <div className="mt-3 flex min-h-[15rem] flex-1 flex-col justify-end gap-2">
                     <AnimatePresence initial={false}>
                       {SCRIPT.slice(0, Math.min(beat, SCRIPT.length)).map((m, i) => (
@@ -119,8 +119,8 @@ export default function StaffDesk() {
                           transition={{ duration: 0.4, ease }}
                           className={
                             m.who === "you"
-                              ? "ml-auto max-w-[85%] rounded-2xl rounded-br-md bg-aqua/80 px-3 py-2 text-[0.8rem] text-night"
-                              : "max-w-[90%] rounded-2xl rounded-bl-md border border-white/10 bg-white/5 px-3 py-2 text-[0.8rem] text-white/85"
+                              ? "ml-auto max-w-[85%] rounded-2xl rounded-br-md bg-th-aqua/80 px-3 py-2 text-[0.8rem] text-th-on"
+                              : "max-w-[90%] rounded-2xl rounded-bl-md border border-th-fg/10 bg-th-fg/5 px-3 py-2 text-[0.8rem] text-th-fg/85"
                           }
                         >
                           {m.text}

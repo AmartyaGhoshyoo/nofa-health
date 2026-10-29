@@ -1,29 +1,41 @@
 import type { Config } from "tailwindcss";
 
+// A theme colour from globals.css, with Tailwind's opacity modifier support.
+const v = (name: string) => `rgb(var(--${name}) / <alpha-value>)`;
+
 const config: Config = {
   content: ["./src/**/*.{ts,tsx}"],
   theme: {
     extend: {
       colors: {
-        canvas: { DEFAULT: "#F5F9F9", soft: "#EAF3F3" },
-        surface: "#FFFFFF",
-        ink: { DEFAULT: "#0F2B33", muted: "#46606A", faint: "#5B737C" },
+        // Theme-aware: values live in globals.css (light by default, dark under data-theme="dark").
+        canvas: { DEFAULT: v("canvas"), soft: v("canvas-soft") },
+        surface: v("surface"),
+        ink: { DEFAULT: v("ink"), muted: v("ink-muted"), faint: v("ink-faint") },
         teal: {
-          DEFAULT: "#0E7490", // buttons, accent text (AA on white)
-          hover: "#0B5F77",
-          bright: "#0891B2", // chart marks
-          light: "#22D3EE", // decorative only
-          soft: "rgba(14,116,144,0.08)",
+          DEFAULT: v("teal"), // buttons, accent text
+          hover: v("teal-hover"),
+          bright: v("teal-bright"), // chart marks
+          light: v("teal-light"), // decorative only
+          soft: "rgb(var(--teal) / 0.1)",
         },
-        mint: { DEFAULT: "#059669", soft: "rgba(5,150,105,0.1)" }, // "confirmed" status
-        amber: { DEFAULT: "#B45309", soft: "rgba(180,83,9,0.1)" }, // "needs staff" status
-        rose: { DEFAULT: "#BE123C", soft: "rgba(190,18,60,0.08)" }, // "affected" status
+        mint: { DEFAULT: v("mint"), soft: "rgb(var(--mint) / 0.12)" }, // "confirmed" status
+        amber: { DEFAULT: v("amber"), soft: "rgb(var(--amber) / 0.12)" }, // "needs staff" status
+        rose: { DEFAULT: v("rose"), soft: "rgb(var(--rose) / 0.1)" }, // "affected" status
+        "on-accent": v("on-accent"),
         ocean: { DEFAULT: "#062A33", soft: "#0B3A45", line: "rgba(255,255,255,0.1)" },
-        line: { DEFAULT: "rgba(15,43,51,0.09)", strong: "rgba(15,43,51,0.16)" },
-        // Animated homepage ("night shift"): near-black canvas, luminous aqua, lime spark.
-        night: { DEFAULT: "#04080A", 900: "#070D10", 800: "#0B1418", 700: "#122027", line: "rgba(255,255,255,0.08)" },
-        aqua: { DEFAULT: "#5EEAD4", deep: "#14B8A6", sky: "#67E8F9" },
-        spark: { DEFAULT: "#C8F169", deep: "#A3D63A" },
+        line: { DEFAULT: "rgb(var(--ink) / 0.1)", strong: "rgb(var(--ink) / 0.18)" },
+        // Animated homepage ("night shift"): th-* follow the theme; th-on is always dark
+        // (text on aqua / lime fills).
+        th: {
+          bg: v("th-bg"),
+          panel: v("th-panel"),
+          fg: v("th-fg"),
+          line: "rgb(var(--th-fg) / 0.09)",
+          aqua: { DEFAULT: v("th-aqua"), ink: v("th-aqua-ink") },
+          spark: { DEFAULT: v("th-spark"), ink: v("th-spark-ink") },
+          on: "#04080A",
+        },
       },
       fontFamily: {
         display: ["var(--font-display)", "Georgia", "serif"],

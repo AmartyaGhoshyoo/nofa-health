@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Figtree, Instrument_Serif, JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import Providers from "@/components/Providers";
+import { THEME_SCRIPT } from "@/components/ThemeToggle";
 import AssistantWidget from "@/components/assistant/AssistantWidget";
 import { site } from "@/config/site";
 import "./globals.css";
@@ -25,11 +26,20 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image", title, description: site.description },
 };
 
-export const viewport: Viewport = { themeColor: "#F5F9F9" };
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#04080A" },
+    { media: "(prefers-color-scheme: light)", color: "#F4F7F5" },
+  ],
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    // The theme script sets data-theme before React loads, hence suppressHydrationWarning.
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body className={`${body.variable} ${display.variable} ${mono.variable} ${widget.variable} ${serif.variable} font-body`}>
         <Providers>
           {children}

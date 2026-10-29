@@ -155,7 +155,7 @@ function Launcher({ open, onToggle }: { open: boolean; onToggle: () => void }) {
       transition={{ delay: 1.4, duration: 0.6, ease }}
       whileHover={{ y: -2 }}
       whileTap={{ scale: 0.96 }}
-      className="fixed bottom-5 right-5 z-[90] flex font-widget h-[52px] cursor-pointer items-center gap-2.5 rounded-full bg-ocean pl-1.5 pr-5 text-[0.92rem] font-bold text-white shadow-[0_16px_40px_-12px_rgba(6,42,51,0.6)]"
+      className="fixed bottom-5 right-5 z-[90] flex font-widget h-[52px] cursor-pointer items-center gap-2.5 rounded-full bg-teal pl-1.5 pr-5 text-[0.92rem] font-bold text-on-accent shadow-[0_16px_40px_-12px_rgba(6,42,51,0.6)]"
     >
       <span className="relative flex h-10 w-10 items-center justify-center">
         <AnimatePresence mode="wait" initial={false}>
@@ -166,7 +166,7 @@ function Launcher({ open, onToggle }: { open: boolean; onToggle: () => void }) {
               animate={{ opacity: 1, rotate: 0 }}
               exit={{ opacity: 0, rotate: 90 }}
               transition={{ duration: 0.2 }}
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10"
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-on-accent/10"
             >
               <CloseIcon />
             </motion.span>
@@ -360,7 +360,7 @@ function ChatView({ initialPrompt, onPromptUsed }: { initialPrompt?: string; onP
                 <p
                   className={`max-w-[86%] whitespace-pre-wrap rounded-[1.15rem] px-3.5 py-2.5 text-[0.94rem] leading-relaxed shadow-[0_1px_2px_rgba(15,43,51,0.06)] ${
                     m.role === "user"
-                      ? "rounded-br-md bg-gradient-to-br from-teal to-teal-bright text-white"
+                      ? "rounded-br-md bg-gradient-to-br from-teal to-teal-bright text-on-accent"
                       : "rounded-bl-md border border-line bg-surface text-ink"
                   }`}
                 >
@@ -402,7 +402,7 @@ function ChatView({ initialPrompt, onPromptUsed }: { initialPrompt?: string; onP
                 key={q}
                 type="button"
                 onClick={() => send(q)}
-                className="min-h-[40px] cursor-pointer rounded-full border border-teal/25 bg-surface px-3.5 py-1.5 text-[0.84rem] font-bold text-teal transition-colors hover:bg-teal hover:text-white"
+                className="min-h-[40px] cursor-pointer rounded-full border border-teal/25 bg-surface px-3.5 py-1.5 text-[0.84rem] font-bold text-teal transition-colors hover:bg-teal hover:text-on-accent"
               >
                 {q}
               </button>
@@ -442,7 +442,7 @@ function ChatView({ initialPrompt, onPromptUsed }: { initialPrompt?: string; onP
             aria-label="Send message"
             disabled={!input.trim() || pending}
             whileTap={{ scale: 0.92 }}
-            className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full bg-teal text-white transition-opacity disabled:cursor-not-allowed disabled:opacity-30"
+            className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full bg-teal text-on-accent transition-opacity disabled:cursor-not-allowed disabled:opacity-30"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
@@ -630,10 +630,10 @@ function BookingPanel({
 }
 
 const TONES = {
-  teal: { head: "bg-teal-soft text-teal", border: "border-teal/25", button: "bg-teal text-white hover:bg-teal-hover" },
-  mint: { head: "bg-mint-soft text-mint", border: "border-mint/25", button: "bg-mint text-white" },
-  amber: { head: "bg-amber-soft text-amber", border: "border-amber/25", button: "bg-amber text-white" },
-  rose: { head: "bg-rose-soft text-rose", border: "border-rose/25", button: "bg-rose text-white hover:opacity-90" },
+  teal: { head: "bg-teal-soft text-teal", border: "border-teal/25", button: "bg-teal text-on-accent hover:bg-teal-hover" },
+  mint: { head: "bg-mint-soft text-mint", border: "border-mint/25", button: "bg-mint text-on-accent" },
+  amber: { head: "bg-amber-soft text-amber", border: "border-amber/25", button: "bg-amber text-on-accent" },
+  rose: { head: "bg-rose-soft text-rose", border: "border-rose/25", button: "bg-rose text-on-accent hover:opacity-90" },
   plain: {
     head: "bg-canvas-soft text-ink-muted",
     border: "border-line-strong",
@@ -760,7 +760,7 @@ function DoctorCards({ doctors, onChoose }: { doctors: DoctorOption[]; onChoose?
           <button
             type="button"
             onClick={() => onChoose(d)}
-            className="min-h-[36px] shrink-0 cursor-pointer rounded-xl bg-teal px-3 text-[0.82rem] font-bold text-white hover:bg-teal-hover"
+            className="min-h-[36px] shrink-0 cursor-pointer rounded-xl bg-teal px-3 text-[0.82rem] font-bold text-on-accent hover:bg-teal-hover"
           >
             Choose
           </button>
@@ -830,7 +830,7 @@ function EmailBox({ onSubmit }: { onSubmit: (email: string) => Promise<string | 
         <button
           type="submit"
           disabled={!email.trim() || busy}
-          className="shrink-0 cursor-pointer rounded-xl bg-teal px-3.5 text-[0.86rem] font-bold text-white transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
+          className="shrink-0 cursor-pointer rounded-xl bg-teal px-3.5 text-[0.86rem] font-bold text-on-accent transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
         >
           {busy ? "Saving…" : "Confirm email"}
         </button>
@@ -1014,7 +1014,7 @@ function VoiceView() {
                 className={`inline-block rounded-[1.1rem] px-3.5 py-2 text-left text-[0.88rem] leading-relaxed ${
                   t.role === "assistant"
                     ? "rounded-tl-md border border-line bg-surface text-ink"
-                    : "rounded-tr-md bg-gradient-to-br from-teal to-teal-bright text-white"
+                    : "rounded-tr-md bg-gradient-to-br from-teal to-teal-bright text-on-accent"
                 }`}
               >
                 {t.text}
@@ -1039,7 +1039,7 @@ function VoiceView() {
               animate={{ opacity: 1, scale: 1, width: 48 }}
               exit={{ opacity: 0, scale: 0.8, width: 0 }}
               className={`flex h-12 cursor-pointer items-center justify-center rounded-full border transition-colors ${
-                muted ? "border-ink bg-ink text-white" : "border-line-strong text-ink hover:bg-canvas-soft"
+                muted ? "border-ink bg-ink text-canvas" : "border-line-strong text-ink hover:bg-canvas-soft"
               }`}
             >
               <MicIcon off={muted} />
@@ -1051,8 +1051,8 @@ function VoiceView() {
           layout
           onClick={active ? stop : start}
           whileTap={{ scale: 0.96 }}
-          className={`flex h-12 cursor-pointer items-center gap-2 rounded-full px-6 text-[0.95rem] font-bold text-white transition-colors ${
-            active ? "bg-rose hover:bg-[#9F1239]" : "bg-teal hover:bg-teal-hover"
+          className={`flex h-12 cursor-pointer items-center gap-2 rounded-full px-6 text-[0.95rem] font-bold text-on-accent transition-colors ${
+            active ? "bg-rose hover:bg-rose/90" : "bg-teal hover:bg-teal-hover"
           }`}
         >
           {active ? (
