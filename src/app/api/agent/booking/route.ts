@@ -33,7 +33,7 @@ interface ZovakDoctor {
 interface ZovakState {
   stage: BookingState["stage"];
   doctor_options?: ZovakDoctor[];
-  chosen_doctor?: Omit<ZovakDoctor, "next_free"> | null;
+  chosen_doctor?: (Omit<ZovakDoctor, "next_free"> & { slots?: { date: string; times: string[] }[] }) | null;
   proposal: ZovakAppointment | null;
   booking: ZovakAppointment | null;
   change: { id: string; kind: "move" | "cancel"; new_start: string | null; new_end: string | null } | null;
@@ -97,6 +97,7 @@ export async function GET(req: Request) {
           services: data.chosen_doctor.services,
           hours: data.chosen_doctor.hours,
           about: data.chosen_doctor.about,
+          slots: data.chosen_doctor.slots ?? [],
         }
       : null,
     proposal: appointment(data.proposal),
@@ -117,7 +118,8 @@ export async function GET(req: Request) {
 // ZOVAK route + body for each card button, per channel.
 type Target = (id: string, conversationId: string, email?: string) => [path: string, body: object];
 
-const ACTIONS: Record<BookingAction, Record<Channel, Target>> = {
+// Not every button exists on both channels (chat sends a tapped time as a message).
+const ACTIONS: Record<BookingAction, Partial<Record<Channel, Target>>> = {
   email: {
     voice: (id, c, email) => ["/api/v1/dev/voice/email-input", { conversation_id: c, request_id: id, email }],
     chat: (id, c, email) => ["/api/v1/dev/proposal-email", { conversation_id: c, proposal_id: id, email }],
@@ -137,6 +139,9 @@ const ACTIONS: Record<BookingAction, Record<Channel, Target>> = {
   keep: {
     voice: (id, c) => ["/api/v1/dev/voice/change/discard", { conversation_id: c, change_id: id }],
     chat: (id, c) => ["/api/v1/dev/change/discard", { conversation_id: c, change_id: id }],
+  },
+  "pick-slot": {
+    voice: (start, c) => ["/api/v1/dev/voice/pick-slot", { conversation_id: c, start }],
   },
 };
 

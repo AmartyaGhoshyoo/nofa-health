@@ -70,8 +70,8 @@ export interface DoctorOption {
 export interface BookingState {
   stage: BookingStage;
   doctorOptions: DoctorOption[];
-  /** The doctor the patient picked, until the booking details are ready. */
-  chosenDoctor: Omit<DoctorOption, "nextFree"> | null;
+  /** The doctor the patient picked, with their free times, until the booking details are ready. */
+  chosenDoctor: ChosenDoctor | null;
   proposal: Appointment | null;
   booking: Appointment | null;
   change: { id: string; kind: "move" | "cancel"; newStart: string | null; newEnd: string | null } | null;
@@ -86,7 +86,12 @@ export interface BookingState {
 export type CallEndReason = "silence" | "off_topic" | "done" | "misuse" | "no_audio" | "noise" | "remote";
 
 /** Card buttons. None of them books from typed text alone: each is an explicit tap. */
-export type BookingAction = "email" | "reopen-email" | "confirm-booking" | "confirm-change" | "keep";
+export type BookingAction = "email" | "reopen-email" | "confirm-booking" | "confirm-change" | "keep" | "pick-slot";
+
+/** The chosen doctor plus their next days with free times (tap-to-pick buttons). */
+export interface ChosenDoctor extends Omit<DoctorOption, "nextFree"> {
+  slots: { date: string; times: string[] }[]; // date YYYY-MM-DD, times ISO
+}
 
 /** Which conversation the card belongs to. Voice calls also carry the call's token. */
 export interface BookingChannel {

@@ -21,6 +21,7 @@ import type {
   BookingState,
   CallEndReason,
   DoctorOption,
+  ChosenDoctor as ChosenDoctorInfo,
   ChatMessage,
   VoiceSession,
   VoiceState,
@@ -392,6 +393,7 @@ function ChatView({ initialPrompt, onPromptUsed }: { initialPrompt?: string; onP
             channel={getChatChannel()}
             onChange={setBooking}
             onChooseDoctor={(d) => send(`I'd like to book with ${d.name} (${d.specialty}).`)}
+            onPickTime={(iso, doctor) => send(slotRequest(iso, doctor))}
           />
         )}
 
@@ -503,12 +505,15 @@ function BookingPanel({
   channel,
   onChange,
   onChooseDoctor,
+  onPickTime,
 }: {
   state: BookingState;
   channel: BookingChannel;
   onChange: (state: BookingState) => void;
   /** Chat: tapping a doctor card sends a message. Voice: the patient says the name. */
   onChooseDoctor?: (doctor: DoctorOption) => void;
+  /** Chat: a tapped time is sent as a message. Voice: it goes to ZOVAK, which says it on the call. */
+  onPickTime?: (iso: string, doctorName: string) => void;
 }) {
   const [busy, setBusy] = useState<BookingAction | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -531,7 +536,12 @@ function BookingPanel({
   const doctorStep = !choosing ? null : state.doctorOptions.length > 0 ? (
     <DoctorCards doctors={state.doctorOptions} onChoose={onChooseDoctor} />
   ) : chosenDoctor ? (
-    <ChosenDoctor doctor={chosenDoctor} voice={!onChooseDoctor} />
+    <ChosenDoctor
+      doctor={chosenDoctor}
+      voice={!onChooseDoctor}
+      busy={busy === "pick-slot"}
+      onPick={(iso) => (onPickTime ? onPickTime(iso, chosenDoctor.name) : act("pick-slot", iso))}
+    />
   ) : null;
   if (stage === "idle") return doctorStep;
 
@@ -771,18 +781,83 @@ function DoctorCards({ doctors, onChoose }: { doctors: DoctorOption[]; onChoose?
 }
 
 // After a pick the list collapses to the chosen doctor, so it's clear what happens next.
-function ChosenDoctor({ doctor, voice }: { doctor: Omit<DoctorOption, "nextFree">; voice: boolean }) {
+// "I'd like Friday, October 30 at 11:30 AM with Dr. …" — the same words ZOVAK uses for a tapped time.
+const slotDay = new Intl.DateTimeFormat("en-US", { timeZone: "Asia/Dhaka", weekday: "long", month: "long", day: "numeric" });
+function slotRequest(iso: string, doctorName: string) {
+  const when = new Date(iso);
+  return `I'd like ${slotDay.format(when)} at ${timeFormat.format(when)} with ${doctorName}.`;
+}
+const tabDay = new Intl.DateTimeFormat("en-US", { timeZone: "Asia/Dhaka", weekday: "short", month: "short", day: "numeric" });
+
+// After a pick the list collapses to the chosen doctor, with their free times as buttons.
+function ChosenDoctor({
+  doctor,
+  voice,
+  busy,
+  onPick,
+}: {
+  doctor: ChosenDoctorInfo;
+  voice: boolean;
+  busy: boolean;
+  onPick: (iso: string) => void;
+}) {
+  const [day, setDay] = useState(0);
+  const [picked, setPicked] = useState<string | null>(null);
+  const days = doctor.slots;
+  const times = days[Math.min(day, days.length - 1)]?.times ?? [];
+
   return (
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, ease }} className="w-full shrink-0">
       <CardShell tone="teal" title="Doctor selected" icon>
         <p className="font-bold">{doctor.name}</p>
         <p className="text-ink-muted">
-          {doctor.specialty} · {doctor.services.join(", ")}
+          {doctor.specialty} · Hours {doctor.hours}
         </p>
-        <p className="text-ink-faint">Hours {doctor.hours} (Dhaka time)</p>
-        <p className="mt-2 text-[0.76rem] text-ink-faint">
-          Next: tell {site.agent} the day and time you'd like. Want someone else? Just {voice ? "say so" : "ask"}.
-        </p>
+        {days.length > 0 ? (
+          <>
+            <p className="mt-3 text-[0.76rem] font-bold uppercase tracking-wider text-ink-faint">Pick a free time · Dhaka</p>
+            <div role="tablist" aria-label="Day" className="mt-1.5 flex gap-1.5 overflow-x-auto pb-1">
+              {days.map((d, i) => (
+                <button
+                  key={d.date}
+                  role="tab"
+                  aria-selected={i === day}
+                  onClick={() => setDay(i)}
+                  className={`shrink-0 cursor-pointer rounded-full px-3 py-1 text-[0.78rem] font-bold transition-colors ${
+                    i === day ? "bg-teal text-on-accent" : "border border-line-strong text-ink-muted hover:bg-canvas-soft"
+                  }`}
+                >
+                  {tabDay.format(new Date(d.date + "T12:00:00+06:00"))}
+                </button>
+              ))}
+            </div>
+            <div data-lenis-prevent className="mt-2 grid max-h-[7.5rem] grid-cols-4 gap-1.5 overflow-y-auto pr-0.5">
+              {times.map((iso) => (
+                <button
+                  key={iso}
+                  disabled={busy}
+                  onClick={() => {
+                    setPicked(iso);
+                    onPick(iso);
+                  }}
+                  className={`min-h-[34px] cursor-pointer rounded-lg border text-[0.8rem] font-bold tabular-nums transition-colors disabled:cursor-wait ${
+                    picked === iso ? "border-teal bg-teal text-on-accent" : "border-teal/25 text-teal hover:bg-teal-soft"
+                  }`}
+                >
+                  {timeFormat.format(new Date(iso)).replace(/\s?(AM|PM)/, (m) => m.trim().toLowerCase())}
+                </button>
+              ))}
+            </div>
+            <p className="mt-2 text-[0.74rem] text-ink-faint">
+              Tap a time{voice ? ", or say one" : " or type one"}. Nothing is booked until you confirm. Want someone else? Just{" "}
+              {voice ? "say so" : "ask"}.
+            </p>
+          </>
+        ) : (
+          <p className="mt-2 text-[0.76rem] text-ink-faint">
+            Next: tell {site.agent} the day and time you&apos;d like. Want someone else? Just {voice ? "say so" : "ask"}.
+          </p>
+        )}
       </CardShell>
     </motion.div>
   );
