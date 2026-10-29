@@ -91,6 +91,7 @@ export type BookingAction = "email" | "reopen-email" | "confirm-booking" | "conf
 /** The chosen doctor plus their next days with free times (tap-to-pick buttons). */
 export interface ChosenDoctor extends Omit<DoctorOption, "nextFree"> {
   slots: { date: string; times: string[] }[]; // date YYYY-MM-DD, times ISO
+  picked: string | null; // the time the patient tapped (ISO): the card collapses to it
 }
 
 /** Which conversation the card belongs to. Voice calls also carry the call's token. */

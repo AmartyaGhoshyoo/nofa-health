@@ -33,7 +33,9 @@ interface ZovakDoctor {
 interface ZovakState {
   stage: BookingState["stage"];
   doctor_options?: ZovakDoctor[];
-  chosen_doctor?: (Omit<ZovakDoctor, "next_free"> & { slots?: { date: string; times: string[] }[] }) | null;
+  chosen_doctor?:
+    | (Omit<ZovakDoctor, "next_free"> & { slots?: { date: string; times: string[] }[]; picked?: string | null })
+    | null;
   proposal: ZovakAppointment | null;
   booking: ZovakAppointment | null;
   change: { id: string; kind: "move" | "cancel"; new_start: string | null; new_end: string | null } | null;
@@ -98,6 +100,7 @@ export async function GET(req: Request) {
           hours: data.chosen_doctor.hours,
           about: data.chosen_doctor.about,
           slots: data.chosen_doctor.slots ?? [],
+          picked: data.chosen_doctor.picked ?? null,
         }
       : null,
     proposal: appointment(data.proposal),

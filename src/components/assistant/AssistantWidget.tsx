@@ -803,11 +803,53 @@ function ChosenDoctor({
 }) {
   const [day, setDay] = useState(0);
   const [picked, setPicked] = useState<string | null>(null);
+  // ZOVAK remembers the tapped time; the buttons only come back if the patient wants to change it.
+  const [changing, setChanging] = useState(false);
+  const pickerRef = useRef<HTMLDivElement>(null);
+  // Reopened with "Change time": bring the buttons into view inside the chat.
+  useEffect(() => {
+    if (changing) pickerRef.current?.scrollIntoView({ block: "end" });
+  }, [changing]);
   const days = doctor.slots;
   const times = days[Math.min(day, days.length - 1)]?.times ?? [];
+  const chosen = picked ?? doctor.picked; // the tap shows at once; ZOVAK's copy after a reload
+
+  if (chosen && !changing) {
+    return (
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, ease }} className="w-full shrink-0">
+        <CardShell tone="teal" title="Time selected" icon>
+          <p className="font-bold">
+            {tabDay.format(new Date(chosen))} · {timeFormat.format(new Date(chosen))}
+          </p>
+          <p className="text-ink-muted">with {doctor.name}</p>
+          <div className="mt-2 flex items-center justify-between gap-3">
+            <p className="text-[0.74rem] text-ink-faint">
+              {busy ? "Sending…" : `Next: ${voice ? "say" : "tell"} ${site.agent} your name. Nothing is booked yet.`}
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setPicked(null);
+                setChanging(true);
+              }}
+              className="shrink-0 cursor-pointer text-[0.8rem] font-bold text-teal underline-offset-2 hover:underline"
+            >
+              Change time
+            </button>
+          </div>
+        </CardShell>
+      </motion.div>
+    );
+  }
 
   return (
-    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, ease }} className="w-full shrink-0">
+    <motion.div
+      ref={pickerRef}
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, ease }}
+      className="w-full shrink-0"
+    >
       <CardShell tone="teal" title="Doctor selected" icon>
         <p className="font-bold">{doctor.name}</p>
         <p className="text-ink-muted">
@@ -838,10 +880,11 @@ function ChosenDoctor({
                   disabled={busy}
                   onClick={() => {
                     setPicked(iso);
+                    setChanging(false);
                     onPick(iso);
                   }}
                   className={`min-h-[34px] cursor-pointer rounded-lg border text-[0.8rem] font-bold tabular-nums transition-colors disabled:cursor-wait ${
-                    picked === iso ? "border-teal bg-teal text-on-accent" : "border-teal/25 text-teal hover:bg-teal-soft"
+                    (picked ?? doctor.picked) === iso ? "border-teal bg-teal text-on-accent" : "border-teal/25 text-teal hover:bg-teal-soft"
                   }`}
                 >
                   {timeFormat.format(new Date(iso)).replace(/\s?(AM|PM)/, (m) => m.trim().toLowerCase())}
