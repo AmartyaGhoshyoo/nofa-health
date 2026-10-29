@@ -25,6 +25,7 @@ const config: Config = {
         display: ["var(--font-display)", "Georgia", "serif"],
         body: ["var(--font-body)", "system-ui", "sans-serif"],
         mono: ["var(--font-mono)", "ui-monospace", "monospace"],
+        widget: ["var(--font-widget)", "system-ui", "sans-serif"],
       },
       maxWidth: { wrap: "1200px" },
       keyframes: {
