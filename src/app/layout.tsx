@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Bricolage_Grotesque, Figtree, JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
+import { Bricolage_Grotesque, Figtree, Instrument_Serif, JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import Providers from "@/components/Providers";
 import AssistantWidget from "@/components/assistant/AssistantWidget";
 import { site } from "@/config/site";
@@ -11,6 +11,8 @@ const display = Bricolage_Grotesque({ subsets: ["latin"], weight: ["400", "500",
 const body = Plus_Jakarta_Sans({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-body", display: "swap" });
 // Figtree for the assistant widget: rounded and friendly, still very legible in chat bubbles.
 const widget = Figtree({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-widget", display: "swap" });
+// Instrument Serif italic for the accent words in the big homepage headlines.
+const serif = Instrument_Serif({ subsets: ["latin"], weight: "400", style: ["normal", "italic"], variable: "--font-serif", display: "swap" });
 const mono = JetBrains_Mono({ subsets: ["latin"], weight: ["400", "500"], variable: "--font-mono", display: "swap" });
 
 const title = `${site.name} — ${site.tagline}`;
@@ -28,7 +30,7 @@ export const viewport: Viewport = { themeColor: "#F5F9F9" };
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${body.variable} ${display.variable} ${mono.variable} ${widget.variable} font-body`}>
+      <body className={`${body.variable} ${display.variable} ${mono.variable} ${widget.variable} ${serif.variable} font-body`}>
         <Providers>
           {children}
           <AssistantWidget />

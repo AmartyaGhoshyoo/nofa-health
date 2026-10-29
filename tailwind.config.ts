@@ -20,12 +20,17 @@ const config: Config = {
         rose: { DEFAULT: "#BE123C", soft: "rgba(190,18,60,0.08)" }, // "affected" status
         ocean: { DEFAULT: "#062A33", soft: "#0B3A45", line: "rgba(255,255,255,0.1)" },
         line: { DEFAULT: "rgba(15,43,51,0.09)", strong: "rgba(15,43,51,0.16)" },
+        // Animated homepage ("night shift"): near-black canvas, luminous aqua, lime spark.
+        night: { DEFAULT: "#04080A", 900: "#070D10", 800: "#0B1418", 700: "#122027", line: "rgba(255,255,255,0.08)" },
+        aqua: { DEFAULT: "#5EEAD4", deep: "#14B8A6", sky: "#67E8F9" },
+        spark: { DEFAULT: "#C8F169", deep: "#A3D63A" },
       },
       fontFamily: {
         display: ["var(--font-display)", "Georgia", "serif"],
         body: ["var(--font-body)", "system-ui", "sans-serif"],
         mono: ["var(--font-mono)", "ui-monospace", "monospace"],
         widget: ["var(--font-widget)", "system-ui", "sans-serif"],
+        serif: ["var(--font-serif)", "Georgia", "serif"],
       },
       maxWidth: { wrap: "1200px" },
       keyframes: {

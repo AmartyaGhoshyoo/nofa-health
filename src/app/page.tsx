@@ -1,36 +1,32 @@
-import Header from "@/components/sections/Header";
-import Hero from "@/components/sections/Hero";
-import Statement from "@/components/sections/Statement";
-import Channels from "@/components/sections/Channels";
-import Workflow from "@/components/sections/Workflow";
-import Recovery from "@/components/sections/Recovery";
-import Features from "@/components/sections/Features";
-import Dashboard from "@/components/sections/Dashboard";
-import Trust from "@/components/sections/Trust";
-import FAQ from "@/components/sections/FAQ";
-import CTA from "@/components/sections/CTA";
-import Footer from "@/components/sections/Footer";
+import type { Viewport } from "next";
+import Header from "@/components/night/Header";
+import Hero from "@/components/night/Hero";
+import Story from "@/components/night/Story";
+import Rule from "@/components/night/Rule";
+import Channels from "@/components/night/Channels";
+import RecoveryLab from "@/components/night/RecoveryLab";
+import StaffDesk from "@/components/night/StaffDesk";
+import Guardrails from "@/components/night/Guardrails";
+import Finale from "@/components/night/Finale";
+
+// The animated "night shift" homepage: a dark, scroll-driven story of one booking,
+// then the channels, the running-late planner, the staff desk and the call rules.
+export const viewport: Viewport = { themeColor: "#04080A" };
 
 export default function Home() {
   return (
-    <>
-      {/* Scroll target for logo / "back to top" links (kept off the sticky header,
-          which is always in view so the browser wouldn't scroll to it) */}
-      <span id="top" aria-hidden="true" className="absolute left-0 top-0" />
+    <div className="min-h-screen overflow-x-clip bg-night text-white">
       <Header />
       <main>
         <Hero />
-        <Statement />
+        <Story />
+        <Rule />
         <Channels />
-        <Workflow />
-        <Recovery />
-        <Features />
-        <Dashboard />
-        <Trust />
-        <FAQ />
-        <CTA />
+        <RecoveryLab />
+        <StaffDesk />
+        <Guardrails />
+        <Finale />
       </main>
-      <Footer />
-    </>
+    </div>
   );
 }
