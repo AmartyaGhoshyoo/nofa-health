@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://nofa-health.vercel.app">
+  <a href="https://nofa-health.zovak.tech">
     <img src="docs/preview.jpg" alt="Nofa Health — Every patient answered. Every slot, kept." width="100%" />
   </a>
 </p>
@@ -7,7 +7,7 @@
 <h1 align="center">Nofa Health — AI front desk for clinics</h1>
 
 <p align="center">
-  <a href="https://nofa-health.vercel.app"><b>Live site</b></a> ·
+  <a href="https://nofa-health.zovak.tech"><b>Live site</b></a> ·
   Next.js 14 · TypeScript · Tailwind CSS · Motion · Canvas ·
   A product by <a href="https://www.zovak.tech"><b>Zovak</b></a>
 </p>

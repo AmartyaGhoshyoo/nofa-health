@@ -3,7 +3,7 @@ export const site = {
   name: "Nofa Health", // brand
   agent: "Nofa", // what the AI receptionist calls itself
   tagline: "The AI front desk for clinics",
-  url: "https://nofa-health.vercel.app", // switch to your custom domain once you add one
+  url: "https://nofa-health.zovak.tech", // the shared domain (link previews, metadata)
   description:
     "Nofa Health answers every call and message, books and reschedules against live availability, and repairs your schedule when plans change — so your front desk never misses a patient.",
   contactEmail: "hello@nofahealth.example.com", // TODO: replace
