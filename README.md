@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://nofa-health.vercel.app">
-    <img src="docs/preview.jpg" alt="Nofa Health — Every patient answered. Every slot filled." width="100%" />
+    <img src="docs/preview.jpg" alt="Nofa Health — Every patient answered. Every slot, kept." width="100%" />
   </a>
 </p>
 
@@ -8,89 +8,105 @@
 
 <p align="center">
   <a href="https://nofa-health.vercel.app"><b>Live site</b></a> ·
-  Next.js 14 · TypeScript · Tailwind CSS · Motion ·
+  Next.js 14 · TypeScript · Tailwind CSS · Motion · Canvas ·
   A product by <a href="https://www.zovak.tech"><b>Zovak</b></a>
 </p>
 
-Marketing site + interactive demo for a healthcare AI receptionist and
-scheduling agent (voice + chat). It answers every call and message, books
-against live availability, and repairs the schedule when plans change.
+Marketing site and **private live demo** for Nofa, an AI receptionist that books
+appointments by chat, website voice call and phone, and quietly repairs the day when
+a doctor runs late. The brain is **ZOVAK** (Python, FastAPI, OpenAI Agents SDK, GPT-Live)
+in the separate `zovak-backend` repo; this site is its face.
+
+> **Marketing demo only.** The live chat, voice and staff portal are private (team access
+> code), and every message and call costs money. Please follow the test scripts shown
+> next to the chat.
 
 ## Screenshots
 
 <table>
   <tr>
-    <td width="50%"><img src="docs/screenshots/01-hero.jpg" alt="Hero with playable demo call" /><br/><sub><b>Hero</b> — press play to hear a patient and Nofa on a call</sub></td>
-    <td width="50%"><img src="docs/screenshots/02-demo-call.jpg" alt="Demo call playing" /><br/><sub><b>Demo call</b> — voices, live captions, slots and booking in sync</sub></td>
+    <td width="50%"><img src="docs/screenshots/01-hero-dark.jpg" alt="Hero, dark theme" /><br/><sub><b>Hero</b> — flowing light ribbons behind the whole page, live call ticker</sub></td>
+    <td width="50%"><img src="docs/screenshots/02-hero-light.jpg" alt="Hero, light theme" /><br/><sub><b>Light theme</b> — sun/moon switch, remembered per browser</sub></td>
   </tr>
   <tr>
-    <td><img src="docs/screenshots/05-schedule-recovery.jpg" alt="Schedule recovery demo" /><br/><sub><b>Schedule recovery</b> — one command re-plans every affected appointment</sub></td>
-    <td><img src="docs/screenshots/04-how-it-works.jpg" alt="How it works pipeline" /><br/><sub><b>How it works</b> — receive → understand → check → act → confirm</sub></td>
+    <td><img src="docs/screenshots/03-booking-story.jpg" alt="Pinned booking story" /><br/><sub><b>How Nofa books</b> — a pinned, scroll-driven story in four chapters</sub></td>
+    <td><img src="docs/screenshots/04-channels.jpg" alt="Channels" /><br/><sub><b>Channels</b> — chat, website voice, phone + SMS form, WhatsApp</sub></td>
   </tr>
   <tr>
-    <td><img src="docs/screenshots/06-features.jpg" alt="Features bento with live animations" /><br/><sub><b>Features</b> — bento cards with live mini-animations</sub></td>
-    <td><img src="docs/screenshots/07-dashboard.jpg" alt="Dashboard preview" /><br/><sub><b>Visibility</b> — calls, bookings and recovered slots (sample data)</sub></td>
+    <td><img src="docs/screenshots/05-running-late.jpg" alt="Running late lab" /><br/><sub><b>Running late</b> — drag the delay; only the reached patients move</sub></td>
+    <td><img src="docs/screenshots/06-staff-desk.jpg" alt="Staff desk" /><br/><sub><b>Staff desk</b> — every booking lands on the right doctor's day</sub></td>
   </tr>
   <tr>
-    <td><img src="docs/screenshots/03-statement.jpg" alt="Scroll-linked statement and marquees" /><br/><sub><b>Statement</b> — words light up as you scroll</sub></td>
-    <td><img src="docs/screenshots/08-integrations.jpg" alt="Integrations orbit and controls" /><br/><sub><b>Fits your clinic</b> — integrations and trust controls</sub></td>
+    <td><img src="docs/screenshots/07-chat-time-buttons.jpg" alt="Chat with time buttons and test scripts" /><br/><sub><b>Live chat</b> — the right doctor, then their real free times as buttons; test scripts float alongside</sub></td>
+    <td><img src="docs/screenshots/08-chat-booked.jpg" alt="Booked card" /><br/><sub><b>Booked</b> — confirmed by the calendar; one time change allowed</sub></td>
   </tr>
   <tr>
-    <td><img src="docs/screenshots/09-chat-assistant.jpg" alt="Chat assistant booking" /><br/><sub><b>Chat assistant</b> — books and shows a verified confirmation</sub></td>
-    <td align="center"><img src="docs/screenshots/10-mobile.jpg" alt="Mobile view" width="46%" /><br/><sub><b>Mobile</b></sub></td>
+    <td><img src="docs/screenshots/09-private-demo-note.jpg" alt="Private demo note" /><br/><sub><b>Private demo</b> — team code, then a note to accept before using it</sub></td>
+    <td><img src="docs/screenshots/10-staff-portal.jpg" alt="Staff portal" /><br/><sub><b>Staff portal</b> (<code>/staff</code>) — schedules, running late, patient updates, assistant</sub></td>
+  </tr>
+  <tr>
+    <td align="center" colspan="2"><img src="docs/screenshots/11-mobile.jpg" alt="Mobile" width="24%" /><br/><sub><b>Mobile</b></sub></td>
   </tr>
 </table>
+
+## What the live demo does
+
+- **Chat & website voice call** (floating widget): asks what's wrong, offers only the
+  matching doctor(s), shows that doctor's free times as buttons, takes the name, an email
+  typed in a box, and books only after an explicit confirm. One time change after booking,
+  move/cancel, warm goodbyes that end calls by themselves. Replies stream in as they're
+  written; cards appear only when relevant and can be hidden.
+- **Phone** (Telnyx → GPT-Live): the same receptionist; confirming texts a 2-minute form.
+- **Staff portal** (`/staff`): demo PINs, any day's schedule per doctor, "running late"
+  with a preview before anyone is notified, patient updates, staff assistant.
+- **Private**: the widget and portal need the team access code and the note accepted;
+  the money-spending API routes answer 401 until then.
 
 ## Run locally
 
 ```bash
 npm install
 npm run dev      # http://localhost:3000
-npm run build && npm start
 ```
+
+Needs the ZOVAK backend running on `http://127.0.0.1:8000` (see `zovak-backend`).
+`.env.local`:
+
+```bash
+ZOVAK_API_URL=http://127.0.0.1:8000
+NEXT_PUBLIC_AGENT_LIVE=true
+DEMO_ACCESS_CODE=<team access code>
+```
+
+## Deploy (Vercel + ngrok to ZOVAK on your laptop)
+
+1. **ZOVAK** (`zovak-backend/.env`): `PUBLIC_BASE_URL=https://<your-ngrok-domain>` and
+   `SITE_API_KEY=<random>` (`python3 -c "import secrets; print(secrets.token_urlsafe(32))"`).
+   Restart it and run ngrok on port 8000 with that domain.
+2. **Vercel → Environment Variables:** `ZOVAK_API_URL=https://<your-ngrok-domain>`,
+   `ZOVAK_SITE_KEY=<same random value>`, `DEMO_ACCESS_CODE=<team code>`,
+   `NEXT_PUBLIC_AGENT_LIVE=true`.
+3. The site works while your laptop, ZOVAK and ngrok are running.
+
+Through the tunnel ZOVAK only answers this site's server (it must send the site key);
+everyone else gets "Not found" except the phone/WhatsApp webhooks and form pages.
 
 ## Where things live
 
 | Path | What |
 | --- | --- |
-| `src/config/site.ts` | Brand name, tagline, URL, contact email, nav — rename the product here |
-| `src/components/sections/*` | Page sections (Hero, Channels, Workflow, Recovery, Features, Dashboard, Trust, FAQ, CTA) |
-| `src/components/assistant/*` | Floating chat + voice widget and the animated voice orb |
-| `src/lib/agent/client.ts` | **The only API the widget calls** — `sendChatMessage`, `startVoiceSession` |
-| `src/lib/agent/demo.ts` | Scripted demo used while `AGENT_DEMO = true` |
-| `src/lib/agent/tools.ts` | Tool contract for the backend agent (check availability, book, reschedule, cancel, waitlist, handoff) |
-| `src/app/api/agent/chat` | Chat endpoint stub (returns 501) |
-| `src/app/api/agent/session` | Voice session (ephemeral key) endpoint stub (returns 501) |
+| `src/config/backend.ts` | **The one place for ZOVAK's address** (local by default; your ngrok URL for Vercel) |
+| `src/config/site.ts` | Brand name, tagline, URL, contact email |
+| `src/app/page.tsx`, `src/components/night/*` | The animated homepage: ribbons backdrop, hero, booking story, channels, running-late lab, staff desk, call rules |
+| `src/components/assistant/AssistantWidget.tsx` | Chat + voice widget: doctor cards, time buttons, email box, booking/move cards |
+| `src/components/assistant/DemoAccess.tsx` | Private demo gate, Amartya's note, floating test scripts (edit `SCRIPTS`) |
+| `src/lib/access.ts`, `src/middleware.ts`, `src/app/api/demo-access` | Access code check (server-side), cookie, 401 on API routes until unlocked |
+| `src/lib/agent/client.ts` | Browser side: streamed chat, voice (WebRTC), card polling and actions |
+| `src/lib/agent/zovak.ts` | Server side: every call to ZOVAK (site key, ngrok header) |
+| `src/app/api/agent/*`, `src/app/api/staff/*` | Next.js routes that forward to ZOVAK |
+| `src/app/staff/page.tsx` | Staff portal |
+| `src/app/globals.css`, `tailwind.config.ts` | Light/dark theme colours (CSS variables) |
+| `src/components/sections/*` | The previous homepage's sections (kept for reference, not used) |
 
-## Connecting the backend (OpenAI Agents SDK)
-
-1. `npm i @openai/agents zod` and add `OPENAI_API_KEY` to `.env.local`.
-2. **Chat:** implement `src/app/api/agent/chat/route.ts` — build the agent with
-   the tools from `src/lib/agent/tools.ts`, `run()` it on the incoming
-   messages, and return `{ content, quickReplies?, booking? }` (`AgentReply`).
-3. **Voice:** implement `src/app/api/agent/session/route.ts` to mint an
-   ephemeral Realtime key server-side, then fill in `startLiveVoiceSession()`
-   in `src/lib/agent/client.ts` with the SDK's `RealtimeSession`.
-4. Set `AGENT_DEMO = false` in `src/lib/agent/client.ts` (also hides the
-   "Demo" badge).
-
-Rule from the product brief: the agent only tells a patient they're booked
-after the scheduling system returns `{ ok: true }`.
-
-## Demo call audio
-
-"Hear a live call" plays a short scripted call between a patient and Nofa
-(`src/lib/agent/demo-call.json`). By default the visitor's browser voices it
-with two different built-in voices. For studio-quality voices:
-
-```bash
-echo "OPENAI_API_KEY=sk-..." >> .env.local
-npm run demo:audio   # writes public/audio/demo/*.mp3 + manifest.json
-```
-
-The site automatically prefers those recordings once they exist.
-
-## Before launch
-
-- Replace `url` and `contactEmail` in `src/config/site.ts`.
-- Dashboard numbers are illustrative sample data (labelled on the page).
+The full step-by-step documentation with code is `zovak-backend/docs/ZOVAK_Documentation.pdf`,
+and every test case is in `zovak-backend/docs/ZOVAK_Test_Plan.pdf`.
