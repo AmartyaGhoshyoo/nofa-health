@@ -305,9 +305,11 @@ function ChatView({ initialPrompt, onPromptUsed }: { initialPrompt?: string; onP
       setPending(true);
       try {
         const reply = await sendChatMessage(next);
+        // Fetch the new card while the reply is being written out, so the old card
+        // never flashes up in between.
+        const nextCard = AGENT_DEMO ? null : fetchBookingState(getChatChannel());
         setPending(false);
-        await streamReply(reply);
-        if (!AGENT_DEMO) setBooking(await fetchBookingState(getChatChannel()));
+        await streamReply(reply, nextCard);
       } catch {
         setMessages((prev) => [
           ...prev,
@@ -322,7 +324,7 @@ function ChatView({ initialPrompt, onPromptUsed }: { initialPrompt?: string; onP
 
   // ZOVAK returns the whole reply at once, so reveal it word by word. The
   // booking card and quick replies appear once the text has finished.
-  async function streamReply(reply: AgentReply) {
+  async function streamReply(reply: AgentReply, nextCard: Promise<BookingState | null> | null = null) {
     const id = nextId();
     const words = reply.content.split(/(\s+)/);
     setStreamingId(id);
@@ -334,13 +336,19 @@ function ChatView({ initialPrompt, onPromptUsed }: { initialPrompt?: string; onP
       setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, content } : m)));
       if (!reduced) await new Promise((r) => setTimeout(r, 28));
     }
+    const card = nextCard ? await nextCard : undefined;
+    // Same tick: the reply finishes and the up-to-date card appears together.
     setMessages((prev) => prev.map((m) => (m.id === id ? { id, role: "assistant", ...reply } : m)));
+    if (card !== undefined) setBooking(card);
     setStreamingId(null);
   }
 
-  // A CTA elsewhere on the page can open chat with a first message
+  // A CTA elsewhere on the page can open chat with a first message. Sent once, even
+  // when React runs this effect twice (development mode).
+  const promptSent = useRef(false);
   useEffect(() => {
-    if (initialPrompt) {
+    if (initialPrompt && !promptSent.current) {
+      promptSent.current = true;
       send(initialPrompt);
       onPromptUsed();
     } else {
@@ -973,7 +981,7 @@ function EmailBox({ onSubmit }: { onSubmit: (email: string) => Promise<string | 
           {error}
         </p>
       ) : (
-        <p className="mt-1.5 text-[0.74rem] text-ink-faint">This doesn&apos;t book anything yet — you&apos;ll review the details first.</p>
+        <p className="mt-1.5 text-[0.74rem] text-ink-faint">Nothing is booked until you confirm.</p>
       )}
     </form>
   );
