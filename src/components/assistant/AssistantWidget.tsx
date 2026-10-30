@@ -273,8 +273,19 @@ function useStickToBottom<T>(dep: T) {
   return ref;
 }
 
+// The chat on screen, kept for this browser tab (matches ZOVAK's conversation id).
+const CHAT_KEY = "nofa-chat-messages";
+function savedChat(): ChatMessage[] | null {
+  try {
+    const saved = sessionStorage.getItem(CHAT_KEY);
+    return saved ? (JSON.parse(saved) as ChatMessage[]) : null;
+  } catch {
+    return null;
+  }
+}
+
 function ChatView({ initialPrompt, onPromptUsed }: { initialPrompt?: string; onPromptUsed: () => void }) {
-  const [messages, setMessages] = useState<ChatMessage[]>([GREETING]);
+  const [messages, setMessages] = useState<ChatMessage[]>(() => savedChat() ?? [GREETING]);
   const [input, setInput] = useState("");
   const [pending, setPending] = useState(false);
   const [streamingId, setStreamingId] = useState<string | null>(null);
@@ -282,6 +293,21 @@ function ChatView({ initialPrompt, onPromptUsed }: { initialPrompt?: string; onP
   const scrollRef = useStickToBottom([messages, pending, booking]);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const busy = pending || streamingId !== null;
+
+  // Keep the chat for this tab (whole replies only), and bring back its card after a
+  // refresh or after the panel was closed.
+  useEffect(() => {
+    if (busy) return;
+    try {
+      sessionStorage.setItem(CHAT_KEY, JSON.stringify(messages));
+    } catch {
+      /* storage blocked: the chat lasts while the panel is open */
+    }
+  }, [messages, busy]);
+  useEffect(() => {
+    if (!AGENT_DEMO && messages.length > 1) fetchBookingState(getChatChannel()).then(setBooking);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // A new card (doctor cards, time buttons, booking card…) is something to act on:
   // always bring it into view, even if the patient had scrolled up to read.

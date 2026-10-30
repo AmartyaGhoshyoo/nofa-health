@@ -22,10 +22,25 @@ import { demoChatReply, startDemoVoiceSession } from "./demo";
 /** Shows the "Demo" badge in the widget and uses scripted replies. */
 export const AGENT_DEMO = process.env.NEXT_PUBLIC_AGENT_LIVE !== "true";
 
-// One backend conversation per page load, so ZOVAK keeps multi-turn memory.
+// One backend conversation per browser tab, so ZOVAK keeps multi-turn memory, and a
+// refresh or closing the chat panel continues the same chat (a new tab starts fresh).
+const CHAT_ID_KEY = "nofa-chat-id";
 let conversationId: string | null = null;
 function getConversationId(): string {
-  conversationId ??= `web-${crypto.randomUUID()}`;
+  if (conversationId) return conversationId;
+  try {
+    conversationId = sessionStorage.getItem(CHAT_ID_KEY);
+  } catch {
+    /* storage blocked: this page load only */
+  }
+  if (!conversationId) {
+    conversationId = `web-${crypto.randomUUID()}`;
+    try {
+      sessionStorage.setItem(CHAT_ID_KEY, conversationId);
+    } catch {
+      /* storage blocked */
+    }
+  }
   return conversationId;
 }
 
