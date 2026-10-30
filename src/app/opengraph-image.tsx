@@ -122,7 +122,7 @@ export default async function Image() {
             ))}
           </div>
           <div style={{ display: "flex", alignSelf: "center", padding: "9px 16px", borderRadius: 9999, background: SPARK, color: NIGHT, fontSize: 14, letterSpacing: 1.5, fontWeight: 700 }}>
-            ✓ BOOKED · FRI 11:30 AM
+            BOOKED · FRI 11:30 AM
           </div>
         </div>
       </div>
