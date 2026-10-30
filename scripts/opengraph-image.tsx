@@ -1,6 +1,11 @@
 import { ImageResponse } from "next/og";
 import { site } from "@/config/site";
 
+// SOURCE of src/app/opengraph-image.jpg (and twitter-image.jpg). The site now serves that
+// compressed JPEG (~120 KB; WhatsApp drops previews near 300 KB). To change the picture: copy this
+// file back to src/app/opengraph-image.tsx, open /opengraph-image in `npm run dev`, save it as JPEG
+// over the .jpg files, and move this file back here.
+//
 // Link-preview image (WhatsApp, LinkedIn, X, iMessage, Slack…), rendered at build time to
 // a static 1200×630 PNG, in the homepage's "night shift" look: near-black, flowing light
 // ribbons, the serif-italic accent, and a small live booking on the right.
