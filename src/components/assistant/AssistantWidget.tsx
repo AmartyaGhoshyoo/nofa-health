@@ -825,6 +825,9 @@ function ChosenDoctor({
   const days = doctor.slots;
   const times = days[Math.min(day, days.length - 1)]?.times ?? [];
   const chosen = picked ?? doctor.picked; // the tap shows at once; ZOVAK's copy after a reload
+  // ZOVAK is the source of truth: when it records a time, or reopens the choice
+  // ("change the time"), drop the local tap so the card follows it.
+  useEffect(() => setPicked(null), [doctor.picked]);
 
   if (chosen && !changing) {
     return (
