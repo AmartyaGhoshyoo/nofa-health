@@ -1,14 +1,15 @@
 // Server-only helpers for talking to the ZOVAK backend (zovak-backend repo).
 //
 // The browser never calls ZOVAK directly: the Next.js routes in
-// src/app/api/agent/* forward to it. That avoids CORS and keeps the backend
-// URL out of client code. Set ZOVAK_API_URL in .env.local (local backend) or
-// in Vercel's env settings (a tunnel URL that reaches your laptop).
+// src/app/api/agent/* and src/app/api/staff/* forward to it. That avoids CORS and keeps
+// the backend URL out of client code. WHERE ZOVAK is: src/config/backend.ts (one line).
+
+import { ZOVAK_API_URL, ZOVAK_SITE_KEY } from "@/config/backend";
 
 export const ZOVAK_TENANT = "demo-business"; // ZOVAK's dev routes only know this tenant
 
 export function zovakUrl(path: string): string | null {
-  const base = process.env.ZOVAK_API_URL?.replace(/\/+$/, "");
+  const base = ZOVAK_API_URL.replace(/\/+$/, "");
   return base ? `${base}${path}` : null;
 }
 
@@ -18,7 +19,14 @@ export async function zovakFetch(path: string, init?: RequestInit): Promise<Resp
   try {
     return await fetch(url, {
       ...init,
-      headers: { "Content-Type": "application/json", ...accessHeaders(), ...init?.headers },
+      headers: {
+        "Content-Type": "application/json",
+        // ngrok's free plan shows a "visit site" page to unknown callers; this skips it.
+        "ngrok-skip-browser-warning": "1",
+        ...(ZOVAK_SITE_KEY ? { "X-Zovak-Site-Key": ZOVAK_SITE_KEY } : {}),
+        ...accessHeaders(),
+        ...init?.headers,
+      },
       cache: "no-store",
     });
   } catch (err) {

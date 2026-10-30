@@ -78,7 +78,16 @@ export async function streamChatMessage(messages: ChatMessage[], onText: (soFar:
       messages: messages.map(({ role, content }) => ({ role, content })),
     }),
   });
-  if (!res.body) throw new Error(`Agent error ${res.status}`);
+  if (!res.ok || !res.body) {
+    const message = await res.text().catch(() => "");
+    // Friendly backend messages (offline, private demo…) are shown as Nofa's reply.
+    const friendly = res.status === 401 ? "This demo is private. Please unlock it first." : message;
+    if (friendly && !friendly.startsWith("{")) {
+      onText(friendly);
+      return friendly;
+    }
+    throw new Error(`Agent error ${res.status}`);
+  }
   const reader = res.body.getReader();
   const decoder = new TextDecoder();
   let soFar = "";

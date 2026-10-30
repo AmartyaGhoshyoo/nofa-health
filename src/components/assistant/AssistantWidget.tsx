@@ -30,6 +30,7 @@ import type {
 } from "@/lib/agent/types";
 import { site } from "@/config/site";
 import { AssistantMode, OPEN_ASSISTANT_EVENT, OpenAssistantDetail } from "./events";
+import { DemoGate, TestScripts, useDemoAccess } from "./DemoAccess";
 import VoiceOrb from "./VoiceOrb";
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -68,6 +69,12 @@ export default function AssistantWidget() {
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<AssistantMode>("chat");
   const [pendingPrompt, setPendingPrompt] = useState<string | undefined>();
+  // Private demo: the team code + Amartya's note come first (the API refuses otherwise).
+  const [access, setAccess] = useDemoAccess();
+  const [gate, setGate] = useState(false);
+  const accessRef = useRef(access);
+  accessRef.current = access;
+  const openOrGate = useCallback(() => (accessRef.current === "unlocked" ? setOpen(true) : setGate(true)), []);
 
   // Other components open the widget via openAssistant(mode, prompt?)
   useEffect(() => {
@@ -75,7 +82,7 @@ export default function AssistantWidget() {
       const { mode: m, prompt } = (e as CustomEvent<OpenAssistantDetail>).detail ?? {};
       setMode(m === "voice" ? "voice" : "chat");
       setPendingPrompt(prompt);
-      setOpen(true);
+      openOrGate();
     }
     window.addEventListener(OPEN_ASSISTANT_EVENT, onOpen);
     return () => window.removeEventListener(OPEN_ASSISTANT_EVENT, onOpen);
@@ -138,7 +145,21 @@ export default function AssistantWidget() {
         )}
       </AnimatePresence>
 
-      <Launcher open={open} onToggle={() => setOpen((v) => !v)} />
+      <AnimatePresence>
+        {open && access === "unlocked" && <TestScripts key="scripts" />}
+        {gate && (
+          <DemoGate
+            key="gate"
+            onClose={() => setGate(false)}
+            onUnlocked={() => {
+              setAccess("unlocked");
+              setGate(false);
+              setOpen(true);
+            }}
+          />
+        )}
+      </AnimatePresence>
+      <Launcher open={open} onToggle={() => (open ? setOpen(false) : openOrGate())} />
     </>
   );
 }
@@ -499,6 +520,7 @@ function ChatView({ initialPrompt, onPromptUsed }: { initialPrompt?: string; onP
               lastCardKey.current = cardKeyOf(s);
             }}
             onAsk={(text) => send(text)}
+            onDismiss={() => setShowCard(false)}
             onChooseDoctor={(d) => send(`I'd like to book with ${d.name} (${d.specialty}).`)}
             onPickTime={(iso, doctor) => send(slotRequest(iso, doctor))}
           />
@@ -607,7 +629,31 @@ const whenFormat = new Intl.DateTimeFormat("en-US", {
 const timeFormat = new Intl.DateTimeFormat("en-US", { timeZone: "Asia/Dhaka", hour: "numeric", minute: "2-digit" });
 const formatWhen = (iso: string) => whenFormat.format(new Date(iso));
 
-function BookingPanel({
+// Every card gets a ✕: it only hides the card (nothing is cancelled); the card comes back
+// when it changes or the patient asks about the booking.
+function BookingPanel(props: Parameters<typeof BookingPanelBody>[0] & { onDismiss?: () => void }) {
+  const { onDismiss, ...rest } = props;
+  const s = props.state;
+  if (s.stage === "idle" && s.doctorOptions.length === 0 && !s.chosenDoctor) return null;
+  return (
+    <div className="relative w-full">
+      {onDismiss && (
+        <button
+          type="button"
+          onClick={onDismiss}
+          aria-label="Hide this card"
+          title="Hide this card"
+          className="absolute -right-1.5 -top-1.5 z-10 flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border border-line-strong bg-surface text-[0.7rem] text-ink-muted shadow-sm hover:text-ink"
+        >
+          ✕
+        </button>
+      )}
+      <BookingPanelBody {...rest} />
+    </div>
+  );
+}
+
+function BookingPanelBody({
   state,
   channel,
   onChange,
@@ -1147,6 +1193,7 @@ function VoiceView() {
   const [transcript, setTranscript] = useState<VoiceTranscriptEntry[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [booking, setBooking] = useState<{ state: BookingState; channel: BookingChannel } | null>(null);
+  const [hiddenCard, setHiddenCard] = useState<string | null>(null); // ✕: hidden until the card changes
   const [ended, setEnded] = useState<CallEndReason | null>(null);
   const sessionRef = useRef<VoiceSession | null>(null);
   const scrollRef = useStickToBottom(transcript);
@@ -1230,13 +1277,16 @@ function VoiceView() {
         </>
       )}
 
-      {booking && (booking.state.stage !== "idle" || booking.state.doctorOptions.length > 0 || booking.state.chosenDoctor) && (
+      {booking &&
+        (booking.state.stage !== "idle" || booking.state.doctorOptions.length > 0 || booking.state.chosenDoctor) &&
+        cardKeyOf(booking.state) !== hiddenCard && (
         // shrink-0: the card keeps its full height; the transcript below scrolls instead.
         <div className="mt-3 w-full shrink-0">
           <BookingPanel
             state={booking.state}
             channel={booking.channel}
             onChange={(state) => setBooking({ state, channel: booking.channel })}
+            onDismiss={() => setHiddenCard(cardKeyOf(booking.state))}
           />
         </div>
       )}

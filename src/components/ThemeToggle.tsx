@@ -31,7 +31,7 @@ export default function ThemeToggle({ className = "" }: { className?: string }) 
       onClick={flip}
       aria-label={theme === "light" ? "Switch to dark theme" : "Switch to light theme"}
       title={theme === "light" ? "Dark theme" : "Light theme"}
-      className={`relative flex h-9 w-9 cursor-pointer items-center justify-center overflow-hidden rounded-full border border-line-strong transition-colors hover:bg-ink/5 ${className}`}
+      className={`flex h-9 w-9 cursor-pointer items-center justify-center overflow-hidden rounded-full border border-line-strong transition-colors hover:bg-ink/5 ${className}`}
     >
       <AnimatePresence mode="wait" initial={false}>
         <motion.svg

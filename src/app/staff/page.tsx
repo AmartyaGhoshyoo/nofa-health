@@ -7,6 +7,7 @@
 import { FormEvent, ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { site } from "@/config/site";
 import Backdrop from "@/components/night/Backdrop";
+import { DemoGate, TestScripts, useDemoAccess } from "@/components/assistant/DemoAccess";
 import ThemeToggle from "@/components/ThemeToggle";
 
 type Role = "doctor" | "receptionist" | "manager";
@@ -104,6 +105,7 @@ function writeToken(token: string | null) {
 }
 
 export default function StaffPage() {
+  const [access, setAccess] = useDemoAccess(); // private demo: team code + note first
   const [token, setToken] = useState<string | null>(null);
   const [me, setMe] = useState<Me | null>(null);
   const [checking, setChecking] = useState(true);
@@ -130,8 +132,10 @@ export default function StaffPage() {
   return (
     <main className="relative min-h-dvh bg-canvas font-widget text-ink transition-colors duration-500">
       <Backdrop quiet />
+      {access === "locked" && <DemoGate onUnlocked={() => setAccess("unlocked")} />}
+      {access === "unlocked" && <TestScripts placement="page" />}
       <div className="relative z-10">
-        {checking ? null : token && me ? (
+        {checking || access !== "unlocked" ? null : token && me ? (
           <Portal token={token} me={me} onSignOut={signOut} onExpired={signOut} />
         ) : (
           <SignIn
