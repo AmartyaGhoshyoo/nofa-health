@@ -283,6 +283,18 @@ function ChatView({ initialPrompt, onPromptUsed }: { initialPrompt?: string; onP
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const busy = pending || streamingId !== null;
 
+  // A new card (doctor cards, time buttons, booking card…) is something to act on:
+  // always bring it into view, even if the patient had scrolled up to read.
+  const cardKey = booking
+    ? [booking.stage, booking.doctorOptions.length, booking.chosenDoctor?.id, booking.chosenDoctor?.picked].join("|")
+    : "";
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!cardKey || busy || !el) return;
+    const id = setTimeout(() => el.scrollTo({ top: el.scrollHeight, behavior: "smooth" }), 150);
+    return () => clearTimeout(id);
+  }, [cardKey, busy, scrollRef]);
+
   const send = useCallback(
     async (text: string) => {
       const content = text.trim();
