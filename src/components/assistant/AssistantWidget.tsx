@@ -10,6 +10,7 @@ import {
   sendBookingAction,
   sendChatMessage,
   startVoiceSession,
+  streamChatMessage,
 } from "@/lib/agent/client";
 import { DEMO_CLINIC } from "@/lib/agent/demo";
 import type {
@@ -275,6 +276,24 @@ function useStickToBottom<T>(dep: T) {
 
 // The chat on screen, kept for this browser tab (matches ZOVAK's conversation id).
 const CHAT_KEY = "nofa-chat-messages";
+const CARD_KEY = "nofa-chat-card"; // the last card, so it's there instantly after a refresh
+function savedCard(): BookingState | null {
+  try {
+    const saved = sessionStorage.getItem(CARD_KEY);
+    return saved ? (JSON.parse(saved) as BookingState) : null;
+  } catch {
+    return null;
+  }
+}
+// A card shows after a reply only when it changed, or the message is about the booking
+// (time, doctor, email, status…): "what services do you offer?" doesn't repeat it.
+const ABOUT_BOOKING =
+  /\b(book|booking|booked|appointment|status|confirm|cancel|move|reschedule|change|time|times|slot|slots|schedule|doctor|doctors|dr|e-?mail|mail|card|show|when|date|day|available|availability|today|tomorrow)\b/i;
+function cardKeyOf(s: BookingState | null): string {
+  if (!s) return "";
+  const c = s.chosenDoctor;
+  return [s.stage, s.doctorOptions.map((d) => d.id).join(","), c?.id, c?.picked, c?.purpose, s.booking?.start, s.change?.id].join("|");
+}
 function savedChat(): ChatMessage[] | null {
   try {
     const saved = sessionStorage.getItem(CHAT_KEY);
@@ -289,10 +308,20 @@ function ChatView({ initialPrompt, onPromptUsed }: { initialPrompt?: string; onP
   const [input, setInput] = useState("");
   const [pending, setPending] = useState(false);
   const [streamingId, setStreamingId] = useState<string | null>(null);
-  const [booking, setBooking] = useState<BookingState | null>(null);
+  const [booking, setBooking] = useState<BookingState | null>(() => savedCard());
+  const [showCard, setShowCard] = useState(true);
+  const lastCardKey = useRef(cardKeyOf(booking));
   const scrollRef = useStickToBottom([messages, pending, booking]);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const busy = pending || streamingId !== null;
+
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(CARD_KEY, JSON.stringify(booking));
+    } catch {
+      /* storage blocked */
+    }
+  }, [booking]);
 
   // Keep the chat for this tab (whole replies only), and bring back its card after a
   // refresh or after the panel was closed.
@@ -305,7 +334,11 @@ function ChatView({ initialPrompt, onPromptUsed }: { initialPrompt?: string; onP
     }
   }, [messages, busy]);
   useEffect(() => {
-    if (!AGENT_DEMO && messages.length > 1) fetchBookingState(getChatChannel()).then(setBooking);
+    if (!AGENT_DEMO && messages.length > 1)
+      fetchBookingState(getChatChannel()).then((s) => {
+        setBooking(s);
+        lastCardKey.current = cardKeyOf(s);
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -316,10 +349,10 @@ function ChatView({ initialPrompt, onPromptUsed }: { initialPrompt?: string; onP
     : "";
   useEffect(() => {
     const el = scrollRef.current;
-    if (!cardKey || busy || !el) return;
+    if (!cardKey || busy || !el || !showCard) return;
     const id = setTimeout(() => el.scrollTo({ top: el.scrollHeight, behavior: "smooth" }), 150);
     return () => clearTimeout(id);
-  }, [cardKey, busy, scrollRef]);
+  }, [cardKey, busy, showCard, scrollRef]);
 
   const send = useCallback(
     async (text: string) => {
@@ -330,12 +363,34 @@ function ChatView({ initialPrompt, onPromptUsed }: { initialPrompt?: string; onP
       setInput("");
       setPending(true);
       try {
-        const reply = await sendChatMessage(next);
-        // Fetch the new card while the reply is being written out, so the old card
-        // never flashes up in between.
-        const nextCard = AGENT_DEMO ? null : fetchBookingState(getChatChannel());
-        setPending(false);
-        await streamReply(reply, nextCard);
+        if (AGENT_DEMO) {
+          const reply = await sendChatMessage(next);
+          setPending(false);
+          await streamReply(reply);
+          return;
+        }
+        // Nofa's words appear as the AI writes them.
+        const id = nextId();
+        let started = false;
+        const full = await streamChatMessage(next, (soFar) => {
+          if (!started) {
+            started = true;
+            setPending(false);
+            setStreamingId(id);
+            setMessages((prev) => [...prev, { id, role: "assistant", content: soFar }]);
+          } else {
+            setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, content: soFar } : m)));
+          }
+        });
+        const card = await fetchBookingState(getChatChannel());
+        if (!started) setMessages((prev) => [...prev, { id, role: "assistant", content: full }]);
+        // Same tick as the reply finishing: no old card flashes up; the card only shows
+        // when it changed or the message was about the booking.
+        const key = cardKeyOf(card);
+        setShowCard(key !== lastCardKey.current || ABOUT_BOOKING.test(content));
+        lastCardKey.current = key;
+        setBooking(card);
+        setStreamingId(null);
       } catch {
         setMessages((prev) => [
           ...prev,
@@ -343,6 +398,7 @@ function ChatView({ initialPrompt, onPromptUsed }: { initialPrompt?: string; onP
         ]);
       } finally {
         setPending(false);
+        setStreamingId(null);
       }
     },
     [messages, busy]
@@ -433,11 +489,16 @@ function ChatView({ initialPrompt, onPromptUsed }: { initialPrompt?: string; onP
           )}
         </AnimatePresence>
 
-        {booking && !busy && (
+        {booking && !busy && showCard && (
           <BookingPanel
             state={booking}
             channel={getChatChannel()}
-            onChange={setBooking}
+            onChange={(s) => {
+              setBooking(s);
+              setShowCard(true);
+              lastCardKey.current = cardKeyOf(s);
+            }}
+            onAsk={(text) => send(text)}
             onChooseDoctor={(d) => send(`I'd like to book with ${d.name} (${d.specialty}).`)}
             onPickTime={(iso, doctor) => send(slotRequest(iso, doctor))}
           />
@@ -552,6 +613,7 @@ function BookingPanel({
   onChange,
   onChooseDoctor,
   onPickTime,
+  onAsk,
 }: {
   state: BookingState;
   channel: BookingChannel;
@@ -560,6 +622,8 @@ function BookingPanel({
   onChooseDoctor?: (doctor: DoctorOption) => void;
   /** Chat: a tapped time is sent as a message. Voice: it goes to ZOVAK, which says it on the call. */
   onPickTime?: (iso: string, doctorName: string) => void;
+  /** Chat: a button that says something for the patient (e.g. "change my appointment time"). */
+  onAsk?: (text: string) => void;
 }) {
   const [busy, setBusy] = useState<BookingAction | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -625,7 +689,26 @@ function BookingPanel({
       {stage === "booked" && booking && (
         <CardShell tone="mint" title="Booked · confirmed by calendar" icon>
           <AppointmentLines appointment={booking} />
-          <p className="mt-2 text-[0.76rem] text-ink-faint">Need a different time or to cancel? Just ask {site.agent}.</p>
+          {booking.canChangeTime ? (
+            <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2">
+              <p className="text-[0.74rem] text-amber">You can change the time once after booking.</p>
+              {onAsk ? (
+                <button
+                  type="button"
+                  onClick={() => onAsk("I'd like to change my appointment time.")}
+                  className="cursor-pointer rounded-lg border border-mint/40 px-3 py-1.5 text-[0.8rem] font-bold text-mint hover:bg-mint-soft"
+                >
+                  Change time
+                </button>
+              ) : (
+                <p className="text-[0.74rem] text-ink-faint">Say “change the time”.</p>
+              )}
+            </div>
+          ) : (
+            <p className="mt-2 text-[0.76rem] text-ink-faint">
+              The time was already changed once. For another change, please contact the clinic.
+            </p>
+          )}
         </CardShell>
       )}
 
@@ -899,7 +982,7 @@ function ChosenDoctor({
       transition={{ duration: 0.3, ease }}
       className="w-full shrink-0"
     >
-      <CardShell tone="teal" title="Doctor selected" icon>
+      <CardShell tone="teal" title={doctor.purpose === "move" ? "Pick your new time" : "Doctor selected"} icon>
         <p className="font-bold">{doctor.name}</p>
         <p className="text-ink-muted">
           {doctor.specialty} · Hours {doctor.hours}
@@ -941,8 +1024,9 @@ function ChosenDoctor({
               ))}
             </div>
             <p className="mt-2 text-[0.74rem] text-ink-faint">
-              Tap a time{voice ? ", or say one" : " or type one"}. Nothing is booked until you confirm. Want someone else? Just{" "}
-              {voice ? "say so" : "ask"}.
+              {doctor.purpose === "move"
+                ? "Your one time change: tap a new time, then confirm the move (or keep your current time)."
+                : `Tap a time${voice ? ", or say one" : " or type one"}. Nothing is booked until you confirm. Want someone else? Just ${voice ? "say so" : "ask"}.`}
             </p>
           </>
         ) : (

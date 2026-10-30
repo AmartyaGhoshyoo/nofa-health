@@ -60,6 +60,39 @@ export async function sendChatMessage(messages: ChatMessage[]): Promise<AgentRep
   throw new Error(`Agent error ${res.status}`);
 }
 
+/**
+ * The same chat turn, streamed: onText receives the reply so far as Nofa's words arrive.
+ * Resolves with the whole reply. Demo mode has no stream, so the reply arrives at once.
+ */
+export async function streamChatMessage(messages: ChatMessage[], onText: (soFar: string) => void): Promise<string> {
+  if (AGENT_DEMO) {
+    const reply = await demoChatReply(messages);
+    onText(reply.content);
+    return reply.content;
+  }
+  const res = await fetch("/api/agent/chat/stream", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      conversationId: getConversationId(),
+      messages: messages.map(({ role, content }) => ({ role, content })),
+    }),
+  });
+  if (!res.body) throw new Error(`Agent error ${res.status}`);
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let soFar = "";
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    soFar += decoder.decode(value, { stream: true });
+    onText(soFar);
+  }
+  soFar += decoder.decode();
+  if (!soFar.trim()) throw new Error("Empty reply");
+  return soFar;
+}
+
 // ── Booking card ─────────────────────────────────────────────────────────────
 
 /** The chat conversation's booking card channel. */

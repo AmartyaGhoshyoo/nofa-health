@@ -44,6 +44,8 @@ export interface Appointment {
   end: string; // ISO
   customerName: string;
   customerEmail: string | null;
+  /** Confirmed bookings: the patient may still change the time (once). */
+  canChangeTime?: boolean;
 }
 
 export type BookingStage =
@@ -92,6 +94,7 @@ export type BookingAction = "email" | "reopen-email" | "confirm-booking" | "conf
 export interface ChosenDoctor extends Omit<DoctorOption, "nextFree"> {
   slots: { date: string; times: string[] }[]; // date YYYY-MM-DD, times ISO
   picked: string | null; // the time the patient tapped (ISO): the card collapses to it
+  purpose: "book" | "move"; // a new booking, or the one time change of a confirmed booking
 }
 
 /** Which conversation the card belongs to. Voice calls also carry the call's token. */

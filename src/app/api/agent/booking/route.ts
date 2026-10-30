@@ -18,6 +18,7 @@ interface ZovakAppointment {
   end: string;
   customer_name: string;
   customer_email: string | null;
+  can_change_time?: boolean;
 }
 
 interface ZovakDoctor {
@@ -34,7 +35,11 @@ interface ZovakState {
   stage: BookingState["stage"];
   doctor_options?: ZovakDoctor[];
   chosen_doctor?:
-    | (Omit<ZovakDoctor, "next_free"> & { slots?: { date: string; times: string[] }[]; picked?: string | null })
+    | (Omit<ZovakDoctor, "next_free"> & {
+        slots?: { date: string; times: string[] }[];
+        picked?: string | null;
+        purpose?: "book" | "move";
+      })
     | null;
   proposal: ZovakAppointment | null;
   booking: ZovakAppointment | null;
@@ -55,6 +60,7 @@ const appointment = (a: ZovakAppointment | null): Appointment | null =>
     end: a.end,
     customerName: a.customer_name,
     customerEmail: a.customer_email,
+    canChangeTime: a.can_change_time,
   };
 
 function voiceAuth(req: Request): Record<string, string> | null {
@@ -101,6 +107,7 @@ export async function GET(req: Request) {
           about: data.chosen_doctor.about,
           slots: data.chosen_doctor.slots ?? [],
           picked: data.chosen_doctor.picked ?? null,
+          purpose: data.chosen_doctor.purpose ?? "book",
         }
       : null,
     proposal: appointment(data.proposal),
